@@ -19,8 +19,8 @@ export function ServiceDetailModal({
 }: ServiceDetailModalProps) {
   if (!isOpen || !service) return null;
 
-  const retainerAmount = Math.round(service.price * (service.retainerPercentage / 100));
-  const balanceDue = service.price - retainerAmount;
+  const retainerAmount = 200;
+  const balanceDue = Math.max(0, service.price - retainerAmount);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
@@ -104,7 +104,7 @@ export function ServiceDetailModal({
               <div className="flex justify-between items-center py-2 px-3 rounded-xl bg-[#F0F9FA] text-[#007C89] font-semibold border border-[#B2E2E6]">
                 <span className="flex items-center gap-1.5 text-xs sm:text-sm">
                   <CheckCircle className="w-4 h-4" />
-                  Mandatory 30% Retainer (to secure slot):
+                  Mandatory Booking Deposit (to secure slot):
                 </span>
                 <span className="font-extrabold text-sm sm:text-base">R{retainerAmount.toFixed(2)}</span>
               </div>

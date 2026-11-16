@@ -248,7 +248,7 @@ export default function AdminDashboardPage() {
               {services.length}
             </div>
             <p className="text-[11px] text-zinc-500 mt-1">
-              30% default retainer across clinic catalog
+              R200 fixed booking deposit across clinic catalog
             </p>
           </div>
         </div>
@@ -274,7 +274,7 @@ export default function AdminDashboardPage() {
                 : "bg-white text-zinc-600 hover:bg-zinc-100"
             }`}
           >
-            Clinical Services & 30% Retainer Editor
+            Clinical Services & Pricing Editor
           </button>
         </div>
 
@@ -411,10 +411,10 @@ export default function AdminDashboardPage() {
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h3 className="text-lg font-bold text-zinc-900">
-                  Clinical Services Catalog & Retainer Policy
+                  Clinical Services Catalog & Pricing
                 </h3>
                 <p className="text-xs text-zinc-500 mt-1">
-                  Adjust treatment prices and mandatory retainer deposit percentage (30%).
+                  Adjust full treatment prices. Standard booking deposit is fixed at R200 across all services.
                 </p>
               </div>
             </div>
@@ -440,7 +440,7 @@ export default function AdminDashboardPage() {
                       <div>
                         <span className="text-zinc-500">Deposit: </span>
                         <strong className="text-[#007C89]">
-                          {s.retainerPercentage}% (R{Math.round(s.price * (s.retainerPercentage / 100))})
+                          R200 Fixed
                         </strong>
                       </div>
                       <div>
@@ -527,9 +527,23 @@ export default function AdminDashboardPage() {
                     {viewBooking.appointmentDate} at {viewBooking.timeSlot}
                   </strong>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex justify-between items-start gap-3">
                   <span className="text-zinc-500">Location:</span>
-                  <strong className="text-zinc-900">{viewBooking.patientAddress}, {viewBooking.area}</strong>
+                  <div className="text-right">
+                    <strong className="text-zinc-900 block">
+                      {viewBooking.patientAddress}, {viewBooking.area}
+                    </strong>
+                    <a
+                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                        `${viewBooking.patientAddress}, ${viewBooking.area}, Pretoria, South Africa`
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[11px] font-bold text-[#007C89] hover:underline inline-flex items-center gap-1 mt-0.5"
+                    >
+                      <MapPin className="w-3 h-3" /> Open in Google Maps ↗
+                    </a>
+                  </div>
                 </div>
                 <div className="flex justify-between pt-1 border-t border-zinc-200">
                   <span className="text-emerald-700 font-bold">Paid via PayFast:</span>
@@ -609,21 +623,12 @@ export default function AdminDashboardPage() {
                 />
               </div>
 
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-zinc-700 mb-1">
-                  Retainer Deposit Percentage (%)
-                </label>
-                <input
-                  type="number"
-                  value={editRetainer}
-                  onChange={(e) => setEditRetainer(e.target.value)}
-                  className="w-full p-3 rounded-xl border border-zinc-300 text-sm font-semibold bg-zinc-50"
-                />
-                <span className="text-[11px] text-zinc-500 mt-1 block">
-                  Calculated Deposit: R
-                  {Math.round(
-                    (parseFloat(editPrice || "0") * parseFloat(editRetainer || "0")) / 100
-                  )}
+              <div className="p-3.5 rounded-xl bg-[#F0F9FA] border border-[#B2E2E6] text-xs">
+                <span className="font-bold text-[#005C66] block">
+                  Standard Booking Deposit: R200.00 (Fixed)
+                </span>
+                <span className="text-zinc-600 mt-0.5 block">
+                  Balance Due at Visit: R{Math.max(0, parseFloat(editPrice || "0") - 200).toFixed(2)}
                 </span>
               </div>
 

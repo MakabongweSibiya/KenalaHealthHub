@@ -20,13 +20,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Booking not found" }, { status: 404 });
     }
 
-    // Determine amount paid based on choice
-    const retainerPercent = booking.service.retainerPercentage || 30.0;
+    // Determine amount paid based on choice (Fixed R200 deposit or Full 100%)
     const paidAmount =
       booking.paymentChoice === "FULL_100"
         ? booking.totalAmount
-        : Math.round((booking.totalAmount * (retainerPercent / 100)) * 100) / 100;
-    const balance = Math.round((booking.totalAmount - paidAmount) * 100) / 100;
+        : 200.0;
+    const balance = Math.max(0, Math.round((booking.totalAmount - paidAmount) * 100) / 100);
 
     const updated = await prisma.booking.update({
       where: { id: booking.id },

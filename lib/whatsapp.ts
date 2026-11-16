@@ -25,7 +25,7 @@ export async function sendAdminWhatsAppNotification(data: WhatsAppBookingNotific
     `👤 *Patient:* ${data.patientName}\n` +
     `📞 *Phone:* ${data.patientPhone}\n` +
     `📍 *Address:* ${data.address}\n\n` +
-    `💳 *Payment:* ${data.paymentType === "FULL_100" ? "Full Payment (100%)" : "30% Retainer Deposit"}\n` +
+    `💳 *Payment:* ${data.paymentType === "FULL_100" ? "Full Payment (100%)" : "R200 Booking Deposit"}\n` +
     `✅ *Paid via PayFast:* ${formattedAmount}\n` +
     `💵 *Balance Due on Visit:* ${formattedBalance}\n` +
     (data.medicalNotes ? `📝 *Notes:* ${data.medicalNotes}\n\n` : `\n`) +

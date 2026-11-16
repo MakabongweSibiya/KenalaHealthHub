@@ -68,7 +68,7 @@ export function ServiceCard({
     }
   };
 
-  const retainerAmount = Math.round(service.price * (service.retainerPercentage / 100));
+  const retainerAmount = 200;
 
   return (
     <div className="group relative flex flex-col justify-between bg-white rounded-2xl p-6 border border-zinc-200 shadow-sm hover:shadow-xl hover:border-[#00A3AD] transition-all duration-300">
@@ -114,7 +114,7 @@ export function ServiceCard({
 
           <div className="text-right">
             <span className="text-[10px] font-bold text-[#007C89] uppercase tracking-wider block">
-              30% Deposit to Book
+              Booking Deposit
             </span>
             <span className="text-sm font-extrabold text-[#007C89]">
               R{retainerAmount}
