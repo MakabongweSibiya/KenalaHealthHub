@@ -71,26 +71,26 @@ export function ServiceCard({
   const retainerAmount = 200;
 
   return (
-    <div className="group relative flex flex-col justify-between bg-white rounded-2xl p-6 border border-zinc-200 shadow-sm hover:shadow-xl hover:border-[#00A3AD] transition-all duration-300">
+    <div className="group relative flex flex-col justify-between bg-white rounded-2xl p-6 border border-zinc-200 shadow-sm hover:shadow-xl hover:border-[#E86689] transition-all duration-300">
       <div>
         {/* Category & Duration */}
         <div className="flex items-center justify-between gap-2 mb-4">
-          <span className="text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md bg-zinc-100 text-zinc-700">
+          <span className="text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md bg-[#FDF2F5] text-[#D4426E] border border-[#F9D5E0]">
             {service.category}
           </span>
           <span className="flex items-center gap-1 text-xs text-zinc-500 font-medium">
-            <Clock className="w-3.5 h-3.5 text-zinc-400" />
+            <Clock className="w-3.5 h-3.5 text-[#E86689]" />
             {service.durationMinutes} mins
           </span>
         </div>
 
         {/* Icon & Title */}
         <div className="flex items-start gap-3.5 mb-3">
-          <div className="w-12 h-12 rounded-xl bg-[#F0F9FA] text-[#007C89] border border-[#B2E2E6]/50 flex items-center justify-center flex-shrink-0 group-hover:bg-[#007C89] group-hover:text-white transition-colors duration-300">
+          <div className="w-12 h-12 rounded-xl bg-[#F0F9FA] text-[#135061] border border-[#B2E2E6]/50 flex items-center justify-center flex-shrink-0 group-hover:bg-[#135061] group-hover:text-white transition-colors duration-300">
             {getIcon(service.icon)}
           </div>
           <div>
-            <h3 className="font-bold text-lg text-zinc-900 group-hover:text-[#007C89] transition-colors leading-snug">
+            <h3 className="font-bold text-lg text-zinc-900 group-hover:text-[#135061] transition-colors leading-snug">
               {service.name}
             </h3>
           </div>

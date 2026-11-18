@@ -74,15 +74,15 @@ function BookingSuccessContent() {
 
   const downloadIcs = () => {
     if (!booking) return;
-    const title = `Appointment: ${booking.service?.name || "Consultation"} - Kenala Health Hub`;
-    const description = `Appointment with Sr Grace. Reference: ${booking.referenceCode}. Contact: 079 011 8464.`;
-    const location = booking.patientAddress || "Corner Love drive & Alwyn str, ext 4, Nellmapius";
-    const dateStr = booking.appointmentDate?.replace(/-/g, "") || "20261018";
+    const title = `Appointment: ${booking.service?.name || "Treatment"} - Totus Massage & Aesthetics`;
+    const description = `Totus Massage & Aesthetics Appointment. Reference: ${booking.referenceCode}. Contact: 079 011 8464.`;
+    const location = booking.patientAddress || "Totus Studio";
+    const dateStr = booking.appointmentDate?.replace(/-/g, "") || "20261118";
 
     const icsContent = [
       "BEGIN:VCALENDAR",
       "VERSION:2.0",
-      "PRODID:-//Kenala Health Hub//Booking//EN",
+      "PRODID:-//Totus Massage & Aesthetics//Booking//EN",
       "BEGIN:VEVENT",
       `SUMMARY:${title}`,
       `DESCRIPTION:${description}`,
@@ -97,14 +97,14 @@ function BookingSuccessContent() {
     const blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8" });
     const link = document.createElement("a");
     link.href = window.URL.createObjectURL(blob);
-    link.setAttribute("download", `Kenala-Appointment-${refCode}.ics`);
+    link.setAttribute("download", `Totus-Appointment-${refCode}.ics`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
   const whatsappUrl = `https://wa.me/27790118464?text=${encodeURIComponent(
-    `Hello Sr Grace, I have confirmed my booking ${refCode} via PayFast. Looking forward to our appointment!`
+    `Hello Totus Massage & Aesthetics, I have confirmed my booking ${refCode} via PayFast. Looking forward to my appointment!`
   )}`;
 
   return (
@@ -137,7 +137,7 @@ function BookingSuccessContent() {
               Booking Confirmed!
             </h1>
             <p className="text-xs text-zinc-300 mt-1">
-              Your appointment is secured. Sr Grace has been notified via WhatsApp.
+              Your session at Totus Massage &amp; Aesthetics is secured.
             </p>
 
             {/* Reference Badge */}
@@ -164,8 +164,8 @@ function BookingSuccessContent() {
                 <span>Instant PayFast Verification Complete</span>
               </div>
               <div className="flex items-center gap-2 p-3 rounded-xl bg-zinc-50 text-zinc-700 border border-zinc-200 text-xs font-semibold">
-                <span className="w-2 h-2 rounded-full bg-blue-500" />
-                <span>WhatsApp Notification Sent to Sr Grace (079 011 8464)</span>
+                <span className="w-2 h-2 rounded-full bg-[#E86689]" />
+                <span>WhatsApp Notification Sent to Totus Concierge (079 011 8464)</span>
               </div>
             </div>
 
@@ -235,7 +235,7 @@ function BookingSuccessContent() {
 
       {/* Mini Footer */}
       <footer className="text-center py-6 text-xs text-zinc-500 border-t border-zinc-200 bg-white">
-        Kenala Health Hub • Care • Compassion • Community • Nellmapius, Pretoria East
+        Totus Massage &amp; Aesthetics • Serenity • Beauty • Rejuvenation
       </footer>
     </div>
   );

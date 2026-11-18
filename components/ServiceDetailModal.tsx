@@ -33,8 +33,8 @@ export function ServiceDetailModal({
       {/* Modal Dialog Card */}
       <div className="relative w-full max-w-xl bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden z-10 animate-in fade-in zoom-in-95 duration-200">
         
-        {/* Top FNB Blue Banner */}
-        <div className="bg-[#111111] text-white p-6 border-b-4 border-[#007C89] relative">
+        {/* Top Teal & Lotus Pink Banner */}
+        <div className="bg-[#111111] text-white p-6 border-b-4 border-[#E86689] relative">
           <button
             onClick={onClose}
             className="absolute top-5 right-5 p-2 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
@@ -43,7 +43,7 @@ export function ServiceDetailModal({
             <X className="w-5 h-5" />
           </button>
 
-          <span className="text-[10px] font-bold uppercase tracking-widest text-[#00A3AD] px-2 py-0.5 rounded bg-cyan-950/60 inline-block mb-2">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-[#F6A5BA] px-2 py-0.5 rounded bg-[#E86689]/20 border border-[#E86689]/40 inline-block mb-2">
             {service.category}
           </span>
           <h2 className="text-2xl font-extrabold text-white pr-8">
@@ -51,13 +51,13 @@ export function ServiceDetailModal({
           </h2>
           <div className="flex items-center gap-4 mt-2 text-xs text-zinc-300">
             <span className="flex items-center gap-1">
-              <Clock className="w-3.5 h-3.5 text-[#00A3AD]" />
+              <Clock className="w-3.5 h-3.5 text-[#E86689]" />
               Estimated Duration: {service.durationMinutes} Minutes
             </span>
             <span>•</span>
             <span className="flex items-center gap-1">
               <ShieldCheck className="w-3.5 h-3.5 text-[#00A3AD]" />
-              Administered by Sr Grace
+              Totus Massage &amp; Aesthetics
             </span>
           </div>
         </div>

@@ -406,8 +406,8 @@ export function BookingModal({
 
       {/* Modal Dialog */}
       <div className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden z-10 animate-in fade-in zoom-in-95 duration-200">
-        {/* Header (FNB Blue Accent) */}
-        <div className="bg-[#111111] text-white p-6 border-b-4 border-[#007C89] relative">
+        {/* Header (Teal & Lotus Pink Accent) */}
+        <div className="bg-[#111111] text-white p-6 border-b-4 border-[#E86689] relative">
           <button
             onClick={onClose}
             className="absolute top-5 right-5 p-2 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
@@ -415,22 +415,22 @@ export function BookingModal({
             <X className="w-5 h-5" />
           </button>
 
-          <span className="text-[10px] font-bold uppercase tracking-widest text-[#00A3AD] px-2 py-0.5 rounded bg-cyan-950/60 inline-block mb-1">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-[#F6A5BA] px-2.5 py-0.5 rounded bg-[#E86689]/20 border border-[#E86689]/40 inline-block mb-1">
             Step {step} of 3
           </span>
           <h2 className="text-2xl font-extrabold text-white">
-            {step === 1 && "Select Service & Schedule"}
-            {step === 2 && "Patient Contact & Location"}
+            {step === 1 && "Select Treatment & Schedule"}
+            {step === 2 && "Client Details & Location"}
             {step === 3 && "Payment & Slot Confirmation"}
           </h2>
           <p className="text-xs text-zinc-400 mt-1">
-            Care • Compassion • Community — Sr Grace (079 011 8464)
+            Totus Massage &amp; Aesthetics — Concierge (079 011 8464)
           </p>
 
           {/* Stepper Progress Bar */}
           <div className="grid grid-cols-3 gap-2 mt-4">
             <div className={`h-1.5 rounded-full ${step >= 1 ? "bg-[#007C89]" : "bg-zinc-700"}`} />
-            <div className={`h-1.5 rounded-full ${step >= 2 ? "bg-[#007C89]" : "bg-zinc-700"}`} />
+            <div className={`h-1.5 rounded-full ${step >= 2 ? "bg-[#E86689]" : "bg-zinc-700"}`} />
             <div className={`h-1.5 rounded-full ${step >= 3 ? "bg-[#007C89]" : "bg-zinc-700"}`} />
           </div>
         </div>
@@ -443,21 +443,30 @@ export function BookingModal({
               {/* Service Select */}
               <div className={`${shakingField === "service" ? "animate-shake" : ""}`}>
                 <label className="block text-xs font-bold uppercase tracking-wider text-zinc-700 mb-1.5">
-                  Clinical Service *
+                  Massage or Aesthetic Treatment *
                 </label>
-                <select
-                  value={selectedServiceId}
-                  onChange={(e) => setSelectedServiceId(e.target.value)}
-                  className={`w-full p-3.5 rounded-xl border text-sm font-semibold bg-zinc-50 text-zinc-900 focus:outline-none focus:ring-2 focus:ring-[#007C89] ${
-                    errors.service ? "border-red-500 bg-red-50" : "border-zinc-300"
-                  }`}
-                >
-                  {services.map((s) => (
-                    <option key={s.id} value={s.id}>
-                      {s.name} — Full Fee: R{s.price} (R{FIXED_DEPOSIT_AMOUNT} Deposit)
-                    </option>
-                  ))}
-                </select>
+                {services.length === 0 ? (
+                  <div className="p-4 rounded-2xl bg-[#FDF2F5] border border-[#F9D5E0] text-xs text-zinc-700">
+                    <strong className="text-[#135061] block mb-1">
+                      Treatment Menu Being Updated
+                    </strong>
+                    No treatments are currently listed for online booking. As soon as treatments are added in the Admin Portal, they will appear here automatically.
+                  </div>
+                ) : (
+                  <select
+                    value={selectedServiceId}
+                    onChange={(e) => setSelectedServiceId(e.target.value)}
+                    className={`w-full p-3.5 rounded-xl border text-sm font-semibold bg-zinc-50 text-zinc-900 focus:outline-none focus:ring-2 focus:ring-[#007C89] ${
+                      errors.service ? "border-red-500 bg-red-50" : "border-zinc-300"
+                    }`}
+                  >
+                    {services.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.name} — Full Fee: R{s.price} (R{FIXED_DEPOSIT_AMOUNT} Deposit)
+                      </option>
+                    ))}
+                  </select>
+                )}
                 {errors.service && (
                   <p className="text-xs font-bold text-red-600 mt-1 flex items-center gap-1">
                     <AlertTriangle className="w-3.5 h-3.5" /> {errors.service}
@@ -860,16 +869,16 @@ export function BookingModal({
                 )}
               </div>
 
-              {/* Medical Notes */}
+              {/* Special Requests / Notes */}
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-zinc-700 mb-1.5">
-                  Medical Notes or Symptoms (Optional)
+                  Special Requests, Pressure Preference or Notes (Optional)
                 </label>
                 <div className="relative">
                   <FileText className="absolute left-3.5 top-3 w-4 h-4 text-zinc-400" />
                   <textarea
                     rows={2}
-                    placeholder="Briefly describe any current symptoms, allergies, or questions for Sr Grace..."
+                    placeholder="Briefly note any focus areas, skin sensitivities, or special requests..."
                     value={medicalNotes}
                     onChange={(e) => setMedicalNotes(e.target.value)}
                     className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-zinc-300 text-sm bg-zinc-50 text-zinc-900 focus:ring-2 focus:ring-[#007C89]"
@@ -1048,9 +1057,10 @@ export function BookingModal({
           {step === 1 && (
             <button
               onClick={handleStep1Next}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-xs font-bold text-white bg-[#007C89] hover:bg-[#005C66] shadow-md transition-all active:scale-95"
+              disabled={services.length === 0}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-xs font-bold text-white bg-gradient-to-r from-[#135061] to-[#007C89] hover:from-[#0E3D4B] hover:to-[#005C66] shadow-md transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <span>Continue to Contact</span>
+              <span>Continue to Details</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           )}

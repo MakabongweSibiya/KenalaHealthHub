@@ -115,7 +115,7 @@ export function SuccessModal({ isOpen, onClose, booking }: SuccessModalProps) {
             Booking Confirmed!
           </h2>
           <p className="text-xs text-zinc-300 mt-1">
-            Your appointment has been successfully reserved with Sr Grace.
+            Your session has been successfully reserved at Totus Massage &amp; Aesthetics.
           </p>
 
           {/* Reference Code Pill */}
