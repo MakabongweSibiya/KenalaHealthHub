@@ -17,19 +17,109 @@ export interface EmailBookingPayload {
   medicalNotes?: string | null;
 }
 
-export async function sendBookingEmails(data: EmailBookingPayload) {
-  const apiKey = process.env.RESEND_API_KEY;
-  const fromEmail =
-    process.env.RESEND_FROM_EMAIL ||
+export interface EmailDispatchResult {
+  success: boolean;
+  mock?: boolean;
+  senderUsed?: string;
+  usedFallbackSender?: boolean;
+  clientEmail?: { sent: boolean; id?: string; error?: string };
+  adminEmail?: { sent: boolean; id?: string; error?: string };
+  error?: string;
+}
+
+const FALLBACK_FROM_EMAIL = "Totus Massage & Aesthetics <onboarding@resend.dev>";
+
+async function sendWithFallback(
+  resend: Resend,
+  primaryFrom: string,
+  payload: {
+    to: string;
+    replyTo?: string;
+    subject: string;
+    html: string;
+  }
+): Promise<{
+  sent: boolean;
+  id?: string;
+  senderUsed: string;
+  usedFallback: boolean;
+  error?: string;
+}> {
+  const firstAttempt = await resend.emails.send({
+    from: primaryFrom,
+    to: payload.to,
+    replyTo: payload.replyTo,
+    subject: payload.subject,
+    html: payload.html,
+  });
+
+  if (!firstAttempt.error && firstAttempt.data?.id) {
+    return {
+      sent: true,
+      id: firstAttempt.data.id,
+      senderUsed: primaryFrom,
+      usedFallback: false,
+    };
+  }
+
+  const errMsg = firstAttempt.error?.message || "Unknown Resend error";
+  const isDomainUnverified =
+    errMsg.toLowerCase().includes("domain") ||
+    errMsg.toLowerCase().includes("not verified") ||
+    errMsg.toLowerCase().includes("testing emails");
+
+  // If custom domain is not yet verified in Resend, automatically retry with onboarding@resend.dev
+  if (isDomainUnverified && primaryFrom !== FALLBACK_FROM_EMAIL) {
+    const fallbackAttempt = await resend.emails.send({
+      from: FALLBACK_FROM_EMAIL,
+      to: payload.to,
+      replyTo: payload.replyTo,
+      subject: payload.subject,
+      html: payload.html,
+    });
+
+    if (!fallbackAttempt.error && fallbackAttempt.data?.id) {
+      return {
+        sent: true,
+        id: fallbackAttempt.data.id,
+        senderUsed: FALLBACK_FROM_EMAIL,
+        usedFallback: true,
+      };
+    }
+
+    return {
+      sent: false,
+      senderUsed: FALLBACK_FROM_EMAIL,
+      usedFallback: true,
+      error: fallbackAttempt.error?.message || errMsg,
+    };
+  }
+
+  return {
+    sent: false,
+    senderUsed: primaryFrom,
+    usedFallback: false,
+    error: errMsg,
+  };
+}
+
+export async function sendBookingEmails(
+  data: EmailBookingPayload
+): Promise<EmailDispatchResult> {
+  const apiKey = process.env.RESEND_API_KEY?.trim();
+  const primaryFrom =
+    process.env.RESEND_FROM_EMAIL?.trim() ||
     "Totus Massage & Aesthetics <noreply@kenalahealthhub.co.za>";
   const adminEmail =
-    process.env.ADMIN_NOTIFICATION_EMAIL || "totusmassages@gmail.com";
+    process.env.ADMIN_NOTIFICATION_EMAIL?.trim() || "totusmassages@gmail.com";
   const appUrl =
-    process.env.NEXT_PUBLIC_APP_URL || "https://kenalahealthhub.co.za";
+    process.env.NEXT_PUBLIC_APP_URL?.trim() || "https://kenalahealthhub.co.za";
 
   const mapsUrl = getGoogleMapsUrl(data.address);
   const totalFee = data.amountPaid + data.balanceDue;
-  const cleanWhatsappPhone = data.patientPhone.replace(/\D/g, "").replace(/^0/, "27");
+  const cleanWhatsappPhone = data.patientPhone
+    .replace(/\D/g, "")
+    .replace(/^0/, "27");
 
   // 1. CLIENT-PERSPECTIVE EMAIL (Official Receipt & Booking Confirmation for Customer)
   const clientHtml = `
@@ -78,12 +168,16 @@ export async function sendBookingEmails(data: EmailBookingPayload) {
           <tr>
             <td style="padding: 11px 0; border-bottom: 1px solid #f1f5f9; color: #64748b;">Amount Paid (PayFast):</td>
             <td style="padding: 11px 0; border-bottom: 1px solid #f1f5f9; font-weight: bold; color: #16a34a; text-align: right;">
-              R${data.amountPaid.toFixed(2)} (${data.paymentType === "FULL_100" ? "100% Full Settlement" : "R200 Booking Deposit"})
+              R${data.amountPaid.toFixed(2)} (${
+    data.paymentType === "FULL_100" ? "100% Full Settlement" : "R200 Booking Deposit"
+  })
             </td>
           </tr>
           <tr>
             <td style="padding: 11px 0; border-bottom: 1px solid #f1f5f9; color: #64748b;">Remaining Balance at Visit:</td>
-            <td style="padding: 11px 0; border-bottom: 1px solid #f1f5f9; font-weight: bold; color: ${data.balanceDue > 0 ? "#D4426E" : "#16a34a"}; text-align: right;">
+            <td style="padding: 11px 0; border-bottom: 1px solid #f1f5f9; font-weight: bold; color: ${
+              data.balanceDue > 0 ? "#D4426E" : "#16a34a"
+            }; text-align: right;">
               R${data.balanceDue.toFixed(2)}
             </td>
           </tr>
@@ -180,16 +274,20 @@ export async function sendBookingEmails(data: EmailBookingPayload) {
         <h3 style="color: #135061; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 12px 0; border-bottom: 2px solid #f1f5f9; padding-bottom: 6px;">
           3. Financial Settlement Summary
         </h3>
-        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 24px;">
-          <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px;">
-            <span style="color: #64748b;">Paid Now via PayFast:</span>
-            <strong style="color: #16a34a; float: right;">R${data.amountPaid.toFixed(2)}</strong>
-          </div>
-          <div style="display: flex; justify-content: space-between; font-size: 14px;">
-            <span style="color: #64748b;">Balance to Collect at Session:</span>
-            <strong style="color: #D4426E; float: right;">R${data.balanceDue.toFixed(2)}</strong>
-          </div>
-        </div>
+        <table style="width: 100%; border-collapse: collapse; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; margin-bottom: 24px; font-size: 14px;">
+          <tr>
+            <td style="padding: 12px 16px; color: #64748b; border-bottom: 1px solid #e2e8f0;">Total Treatment Fee:</td>
+            <td style="padding: 12px 16px; font-weight: bold; color: #0f172a; text-align: right; border-bottom: 1px solid #e2e8f0;">R${totalFee.toFixed(2)}</td>
+          </tr>
+          <tr>
+            <td style="padding: 12px 16px; color: #64748b; border-bottom: 1px solid #e2e8f0;">Paid Now via PayFast:</td>
+            <td style="padding: 12px 16px; font-weight: bold; color: #16a34a; text-align: right; border-bottom: 1px solid #e2e8f0;">R${data.amountPaid.toFixed(2)}</td>
+          </tr>
+          <tr>
+            <td style="padding: 12px 16px; color: #64748b;">Balance to Collect at Session:</td>
+            <td style="padding: 12px 16px; font-weight: bold; color: #D4426E; text-align: right;">R${data.balanceDue.toFixed(2)}</td>
+          </tr>
+        </table>
 
         <div style="text-align: center;">
           <a href="${appUrl}/admin/dashboard" style="display: inline-block; background: #135061; color: #ffffff; font-weight: bold; font-size: 13px; padding: 13px 28px; border-radius: 99px; text-decoration: none;">
@@ -211,8 +309,7 @@ export async function sendBookingEmails(data: EmailBookingPayload) {
     const resend = new Resend(apiKey);
 
     // 1. Send Client-Perspective Receipt to the Client
-    await resend.emails.send({
-      from: fromEmail,
+    const clientRes = await sendWithFallback(resend, primaryFrom, {
       to: data.patientEmail,
       replyTo: adminEmail,
       subject: `Booking Receipt & Confirmation: ${data.serviceName} (${data.referenceCode}) - Totus Massage & Aesthetics`,
@@ -220,15 +317,28 @@ export async function sendBookingEmails(data: EmailBookingPayload) {
     });
 
     // 2. Send Admin/Owner-Perspective Alert to totusmassages@gmail.com
-    await resend.emails.send({
-      from: fromEmail,
+    const adminRes = await sendWithFallback(resend, primaryFrom, {
       to: adminEmail,
       replyTo: data.patientEmail,
       subject: `🌸 New Paid Booking: ${data.patientName} — ${data.serviceName} [${data.referenceCode}]`,
       html: adminHtml,
     });
 
-    return { success: true };
+    return {
+      success: clientRes.sent || adminRes.sent,
+      senderUsed: adminRes.senderUsed || clientRes.senderUsed,
+      usedFallbackSender: adminRes.usedFallback || clientRes.usedFallback,
+      clientEmail: {
+        sent: clientRes.sent,
+        id: clientRes.id,
+        error: clientRes.error,
+      },
+      adminEmail: {
+        sent: adminRes.sent,
+        id: adminRes.id,
+        error: adminRes.error,
+      },
+    };
   } catch (error: any) {
     console.error("[Email Error]:", error.message);
     return { success: false, error: error.message };
