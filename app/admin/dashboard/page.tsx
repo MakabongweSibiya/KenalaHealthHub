@@ -147,28 +147,28 @@ export default function AdminDashboardPage() {
   return (
     <div className="min-h-screen bg-[#F4F5F7] text-zinc-900 flex flex-col">
       {/* Top Admin Navbar */}
-      <header className="bg-[#111111] text-white border-b-4 border-[#007C89] px-6 py-4 sticky top-0 z-30 shadow-md">
+      <header className="bg-[#111111] text-white border-b-4 border-[#E86689] px-6 py-4 sticky top-0 z-30 shadow-md">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link href="/">
               <BrandLogo size="sm" isDark />
             </Link>
-            <span className="hidden sm:inline-block px-2.5 py-1 rounded bg-zinc-800 text-[11px] font-bold text-[#00A3AD] tracking-wider uppercase">
+            <span className="hidden sm:inline-block px-2.5 py-1 rounded bg-[#E86689]/20 border border-[#E86689]/40 text-[11px] font-bold text-[#F6A5BA] tracking-wider uppercase">
               Admin Portal
             </span>
           </div>
 
           <div className="flex items-center gap-4">
             <div className="text-right hidden sm:block">
-              <span className="text-xs font-bold text-white block">Sr Grace</span>
-              <span className="text-[10px] text-zinc-400">Registered Nurse & Admin</span>
+              <span className="text-xs font-bold text-white block">Totus Admin</span>
+              <span className="text-[10px] text-zinc-400">totusmassages@gmail.com</span>
             </div>
 
             <button
               onClick={handleLogout}
               className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white transition-colors"
             >
-              <LogOut className="w-3.5 h-3.5 text-[#007C89]" />
+              <LogOut className="w-3.5 h-3.5 text-[#E86689]" />
               Sign Out
             </button>
           </div>

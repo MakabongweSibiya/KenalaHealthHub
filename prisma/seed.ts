@@ -11,38 +11,42 @@ async function main() {
     where: { id: "default" },
     update: {
       clinicName: "Totus Massage & Aesthetics",
-      practitionerName: "Totus Team",
+      practitionerName: "Totus Admin",
+      adminAlertEmail: "totusmassages@gmail.com",
     },
     create: {
       id: "default",
       clinicName: "Totus Massage & Aesthetics",
-      practitionerName: "Totus Team",
+      practitionerName: "Totus Admin",
       phone: "079 011 8464",
       whatsappNumber: "079 011 8464",
       address: "Pretoria East",
-      operatingHours: "Monday – Saturday: 08:00 – 17:00 | Sunday & Public Holidays: By appointment",
+      operatingHours:
+        "Monday – Saturday: 08:00 – 17:00 | Sunday & Public Holidays: By appointment",
       defaultRetainerPercent: 30.0,
-      adminAlertEmail: "info@kenalahealthhub.co.za",
+      adminAlertEmail: "totusmassages@gmail.za",
     },
   });
 
-  // 2. Seed Default Admin User
-  const salt = await bcrypt.genSalt(10);
-  const passwordHash = await bcrypt.hash("Kenala2026!", salt);
+  // 2. Remove any legacy admin emails and seed official Totus Admin account
+  await prisma.admin.deleteMany({
+    where: { email: { not: "totusmassages@gmail.com" } },
+  });
+
+  const passwordHash = await bcrypt.hash("Nala012!", 12);
 
   await prisma.admin.upsert({
-    where: { email: "admin@kenalahealthhub.co.za" },
-    update: { passwordHash, name: "Totus Admin" },
+    where: { email: "totusmassages@gmail.com" },
+    update: { passwordHash, name: "Totus Admin", role: "SUPER_ADMIN" },
     create: {
-      email: "admin@kenalahealthhub.co.za",
+      email: "totusmassages@gmail.com",
       name: "Totus Admin",
       passwordHash,
       role: "SUPER_ADMIN",
     },
   });
 
-  // Services are managed dynamically via the Admin Portal (0 pre-seeded services)
-  console.log("✅ Studio settings and Admin account ready (0 default services).");
+  console.log("✅ Studio settings and Admin account (totusmassages@gmail.com) ready.");
 }
 
 main()

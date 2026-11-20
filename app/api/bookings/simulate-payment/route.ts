@@ -78,6 +78,7 @@ export async function POST(req: Request) {
       amountPaid: updated.amountPaid,
       balanceDue: updated.balanceDue,
       prepInstructions: updated.service.prepInstructions,
+      medicalNotes: updated.medicalNotes,
     });
 
     return NextResponse.json({ success: true, booking: updated });

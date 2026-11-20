@@ -99,6 +99,7 @@ export async function POST(req: Request) {
         amountPaid: updatedBooking.amountPaid,
         balanceDue: updatedBooking.balanceDue,
         prepInstructions: updatedBooking.service.prepInstructions,
+        medicalNotes: updatedBooking.medicalNotes,
       });
     }
 
