@@ -9,7 +9,6 @@ import { BookingModal } from "@/components/BookingModal";
 import { SuccessModal } from "@/components/SuccessModal";
 import { Footer } from "@/components/Footer";
 import {
-  Sparkles,
   Phone,
   MessageCircle,
   Calendar,
@@ -85,186 +84,188 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FAF9F6] text-zinc-900 selection:bg-[#E86689] selection:text-white">
-      {/* Navbar */}
+    <div className="min-h-screen flex flex-col bg-[#FAF9F6] text-zinc-900 selection:bg-[#135061] selection:text-white">
+      {/* Floating Dynamic Island Navbar */}
       <Navbar onOpenBooking={() => handleOpenBookingModal()} />
 
-      {/* Hero Section */}
-      <HeroSection
-        onOpenBooking={() => handleOpenBookingModal()}
-        onExploreServices={() => {
-          const el = document.getElementById("services-section");
-          el?.scrollIntoView({ behavior: "smooth" });
-        }}
-      />
+      <main className="flex-1">
+        {/* Hero Section */}
+        <HeroSection
+          onOpenBooking={() => handleOpenBookingModal()}
+          onExploreServices={() => {
+            const el = document.getElementById("services-section");
+            el?.scrollIntoView({ behavior: "smooth" });
+          }}
+        />
 
-      {/* Services Catalog Section */}
-      <section
-        id="services-section"
-        className="py-16 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full"
-      >
-        {/* Section Title */}
-        <div className="text-center max-w-2xl mx-auto mb-12">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#FDF2F5] border border-[#F9D5E0] text-[#D4426E] text-xs font-bold tracking-wide uppercase mb-3">
-            <Sparkles className="w-3.5 h-3.5 text-[#E86689]" />
-            Bespoke Spa &amp; Aesthetics Menu
-          </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-zinc-900 tracking-tight">
-            Curated Massage &amp; Aesthetics Treatments
-          </h2>
-          <p className="text-sm text-zinc-600 mt-3 leading-relaxed">
-            Reserve your massage or aesthetic session seamlessly online. Every appointment requires
-            only a{" "}
-            <strong className="text-[#135061]">R200 booking deposit</strong> to secure your slot,
-            with the balance settled comfortably during your visit.
-          </p>
-        </div>
-
-        {/* Category Filters (Only show when services exist) */}
-        {services.length > 0 && (
-          <div className="flex flex-wrap items-center justify-center gap-2 mb-10">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => {
-                  setSelectedCategory(cat);
-                  setIsServicesExpanded(false);
-                }}
-                className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${
-                  selectedCategory === cat
-                    ? "bg-[#135061] text-white shadow-md ring-2 ring-[#E86689]/30"
-                    : "bg-white text-zinc-600 border border-zinc-200 hover:border-[#E86689] hover:bg-[#FDF2F5]/40"
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-        )}
-
-        {/* Services Grid or Serene Empty State */}
-        {loadingServices ? (
-          <div className="py-16 text-center text-sm text-zinc-500 font-medium">
-            Loading treatment menu...
-          </div>
-        ) : services.length === 0 ? (
-          <div className="max-w-xl mx-auto bg-white rounded-3xl p-8 sm:p-10 border border-[#F9D5E0] shadow-sm text-center">
-            <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-[#FDF2F5] border border-[#F9D5E0] flex items-center justify-center">
-              <Sparkles className="w-7 h-7 text-[#E86689]" />
-            </div>
-            <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#E86689] block mb-1">
-              Totus Massage &amp; Aesthetics
-            </span>
-            <h3 className="text-xl font-extrabold text-[#135061]">
-              Treatment Menu Being Curated
-            </h3>
-            <p className="text-xs sm:text-sm text-zinc-600 mt-2 leading-relaxed">
-              Our signature massage and aesthetics treatments are currently being updated by our
-              studio administrator. Please check back shortly or contact our concierge directly on
-              WhatsApp for bespoke bookings.
+        {/* Services Catalog Section */}
+        <section
+          id="services-section"
+          aria-labelledby="services-heading"
+          className="py-16 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full"
+        >
+          {/* Section Title (Clean, No Tacky Tag Above) */}
+          <div className="text-center max-w-2xl mx-auto mb-12">
+            <h2
+              id="services-heading"
+              className="text-3xl sm:text-4xl font-extrabold text-zinc-900 tracking-tight"
+            >
+              Curated Massage &amp; Aesthetics Treatments
+            </h2>
+            <p className="text-sm text-zinc-600 mt-3 leading-relaxed">
+              Reserve your massage or aesthetic session seamlessly online. Every appointment
+              requires only a <strong className="text-[#135061]">R200 booking deposit</strong> to
+              secure your slot, with the balance settled comfortably during your visit.
             </p>
-            <div className="flex flex-wrap items-center justify-center gap-3 mt-6">
-              <a
-                href="https://wa.me/27790118464"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-xs font-bold text-white bg-[#135061] hover:bg-[#007C89] transition-all shadow-sm"
-              >
-                <MessageCircle className="w-4 h-4 text-[#E86689]" />
-                <span>Inquire on WhatsApp</span>
-              </a>
-              <a
-                href="tel:0790118464"
-                className="inline-flex items-center gap-2 px-5 py-3 rounded-full text-xs font-bold text-zinc-800 bg-zinc-100 hover:bg-zinc-200 transition-all"
-              >
-                <Phone className="w-3.5 h-3.5 text-[#007C89]" />
-                <span>Call 079 011 8464</span>
-              </a>
-            </div>
           </div>
-        ) : (
-          <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-              {displayedServices.map((service) => (
-                <ServiceCard
-                  key={service.id}
-                  service={service}
-                  onOpenDetails={handleOpenDetailModal}
-                  onSelectForBooking={(s) => handleOpenBookingModal(s)}
-                />
+
+          {/* Category Filters (Only show when services exist) */}
+          {services.length > 0 && (
+            <div className="flex flex-wrap items-center justify-center gap-2 mb-10">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => {
+                    setSelectedCategory(cat);
+                    setIsServicesExpanded(false);
+                  }}
+                  className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${
+                    selectedCategory === cat
+                      ? "bg-[#135061] text-white shadow-md"
+                      : "bg-white text-zinc-600 border border-zinc-200 hover:border-[#135061] hover:text-[#135061]"
+                  }`}
+                >
+                  {cat}
+                </button>
               ))}
             </div>
+          )}
 
-            {/* Expand / Collapse Button (Top 6 toggle on 'All') */}
-            {selectedCategory === "All" && filteredServices.length > 6 && (
-              <div className="mt-10 flex justify-center">
-                <button
-                  onClick={() => setIsServicesExpanded(!isServicesExpanded)}
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-xs font-bold text-zinc-900 bg-white border border-[#F9D5E0] hover:border-[#E86689] hover:bg-[#FDF2F5]/40 shadow-sm transition-all duration-200 active:scale-95 group"
-                >
-                  <span>
-                    {isServicesExpanded
-                      ? "Show Less"
-                      : `See All (${filteredServices.length})`}
-                  </span>
-                  {isServicesExpanded ? (
-                    <ChevronUp className="w-4 h-4 text-[#E86689] transition-transform group-hover:-translate-y-0.5" />
-                  ) : (
-                    <ChevronDown className="w-4 h-4 text-[#E86689] transition-transform group-hover:translate-y-0.5" />
-                  )}
-                </button>
+          {/* Services Grid or Clean Empty State */}
+          {loadingServices ? (
+            <div className="py-16 text-center text-sm text-zinc-500 font-medium">
+              Loading treatment menu...
+            </div>
+          ) : services.length === 0 ? (
+            <div className="max-w-xl mx-auto bg-white rounded-3xl p-8 sm:p-10 border border-zinc-200/80 shadow-sm text-center">
+              <div className="w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                <img
+                  src="/totus-emblem.png"
+                  alt="Totus Massage & Aesthetics"
+                  className="w-full h-full object-contain"
+                />
               </div>
-            )}
-          </>
-        )}
-      </section>
-
-      {/* Feature Sanctuary Banner / Why Totus Massage & Aesthetics */}
-      <section className="py-16 bg-white border-y border-zinc-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-[#111111] rounded-3xl p-8 sm:p-12 text-white relative overflow-hidden border border-[#E86689]/30">
-            {/* Ambient Teal & Lotus Pink Glow */}
-            <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 rounded-full bg-[#E86689]/20 blur-3xl pointer-events-none" />
-            <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 rounded-full bg-[#00A3AD]/15 blur-3xl pointer-events-none" />
-
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
-              <div className="lg:col-span-8">
-                <span className="text-xs font-extrabold tracking-widest text-[#E86689] uppercase">
-                  TOTUS • MASSAGE &amp; AESTHETICS
-                </span>
-                <h3 className="text-2xl sm:text-3xl font-extrabold mt-2 text-white">
-                  Where Deep Relaxation Meets Radiant Aesthetics
-                </h3>
-                <p className="text-xs sm:text-sm text-zinc-300 mt-3 max-w-2xl leading-relaxed">
-                  Every session at Totus is tailored around your body, skin goals, and personal
-                  comfort. Whether you visit our tranquil studio or book a private mobile session,
-                  experience unhurried luxury and restorative care.
-                </p>
-              </div>
-
-              <div className="lg:col-span-4 flex flex-col gap-3 justify-center items-start lg:items-end">
-                <button
-                  onClick={() => handleOpenBookingModal()}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-sm text-white bg-gradient-to-r from-[#135061] to-[#007C89] hover:from-[#0E3D4B] hover:to-[#005C66] shadow-lg ring-2 ring-[#E86689]/40 transition-all active:scale-95"
-                >
-                  <Calendar className="w-4 h-4 text-[#F6A5BA]" />
-                  <span>Reserve Your Session</span>
-                </button>
-
+              <h3 className="text-xl font-extrabold text-[#135061]">
+                Treatment Menu Being Curated
+              </h3>
+              <p className="text-xs sm:text-sm text-zinc-600 mt-2 leading-relaxed">
+                Our signature massage and aesthetics treatments are currently being updated by our
+                therapist. Please check back shortly or contact our massage therapist directly on
+                WhatsApp for bespoke bookings.
+              </p>
+              <div className="flex flex-wrap items-center justify-center gap-3 mt-6">
                 <a
                   href="https://wa.me/27790118464"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full font-semibold text-xs text-white bg-zinc-800 hover:bg-zinc-700 transition-colors border border-zinc-700"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-xs font-bold text-white bg-[#135061] hover:bg-[#007C89] transition-all shadow-sm"
                 >
-                  <MessageCircle className="w-4 h-4 text-emerald-400" />
-                  <span>WhatsApp Concierge</span>
+                  <MessageCircle className="w-4 h-4 text-white" />
+                  <span>WhatsApp Therapist</span>
+                </a>
+                <a
+                  href="tel:0790118464"
+                  className="inline-flex items-center gap-2 px-5 py-3 rounded-full text-xs font-bold text-zinc-900 bg-zinc-100 hover:bg-zinc-200 transition-all"
+                >
+                  <Phone className="w-3.5 h-3.5 text-[#135061]" />
+                  <span>Call 079 011 8464</span>
                 </a>
               </div>
             </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                {displayedServices.map((service) => (
+                  <ServiceCard
+                    key={service.id}
+                    service={service}
+                    onOpenDetails={handleOpenDetailModal}
+                    onSelectForBooking={(s) => handleOpenBookingModal(s)}
+                  />
+                ))}
+              </div>
+
+              {/* Expand / Collapse Button (Top 6 toggle on 'All') */}
+              {selectedCategory === "All" && filteredServices.length > 6 && (
+                <div className="mt-10 flex justify-center">
+                  <button
+                    onClick={() => setIsServicesExpanded(!isServicesExpanded)}
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-xs font-bold text-zinc-900 bg-white border border-zinc-200 hover:border-[#135061] hover:bg-zinc-50 shadow-sm transition-all duration-200 active:scale-95 group"
+                  >
+                    <span>
+                      {isServicesExpanded
+                        ? "Show Less"
+                        : `See All (${filteredServices.length})`}
+                    </span>
+                    {isServicesExpanded ? (
+                      <ChevronUp className="w-4 h-4 text-[#135061] transition-transform group-hover:-translate-y-0.5" />
+                    ) : (
+                      <ChevronDown className="w-4 h-4 text-[#135061] transition-transform group-hover:translate-y-0.5" />
+                    )}
+                  </button>
+                </div>
+              )}
+            </>
+          )}
+        </section>
+
+        {/* Feature Sanctuary Banner / Why Totus Massage & Aesthetics */}
+        <section className="py-16 bg-white border-y border-zinc-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="bg-[#111111] rounded-3xl p-8 sm:p-12 text-white relative overflow-hidden border border-zinc-800">
+              {/* Ambient Teal & Subtle Lotus Glow */}
+              <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 rounded-full bg-[#E86689]/15 blur-3xl pointer-events-none" />
+              <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 rounded-full bg-[#00A3AD]/15 blur-3xl pointer-events-none" />
+
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
+                <div className="lg:col-span-8">
+                  <span className="text-xs font-extrabold tracking-widest text-[#00A3AD] uppercase">
+                    TOTUS • MASSAGE &amp; AESTHETICS
+                  </span>
+                  <h3 className="text-2xl sm:text-3xl font-extrabold mt-2 text-white">
+                    Where Deep Relaxation Meets Radiant Aesthetics
+                  </h3>
+                  <p className="text-xs sm:text-sm text-zinc-300 mt-3 max-w-2xl leading-relaxed">
+                    Every session at Totus is tailored around your body, skin goals, and personal
+                    comfort. Whether you visit our tranquil studio or book a private mobile session,
+                    experience unhurried luxury and restorative care.
+                  </p>
+                </div>
+
+                <div className="lg:col-span-4 flex flex-col gap-3 justify-center items-start lg:items-end">
+                  <button
+                    onClick={() => handleOpenBookingModal()}
+                    className="w-full sm:w-56 inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full font-bold text-sm text-white bg-[#135061] hover:bg-[#007C89] shadow-lg transition-all active:scale-95"
+                  >
+                    <Calendar className="w-4 h-4 text-white" />
+                    <span>Reserve Your Session</span>
+                  </button>
+
+                  <a
+                    href="https://wa.me/27790118464"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full sm:w-56 inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full font-semibold text-xs text-white bg-zinc-800 hover:bg-zinc-700 transition-colors border border-zinc-700"
+                  >
+                    <MessageCircle className="w-4 h-4 text-[#00A3AD]" />
+                    <span>WhatsApp Therapist</span>
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </main>
 
       {/* Footer */}
       <Footer />

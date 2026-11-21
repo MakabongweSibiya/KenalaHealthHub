@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { BrandLogo } from "./BrandLogo";
-import { Phone, MessageCircle, Clock, MapPin, Menu, X, Sparkles } from "lucide-react";
+import { Phone, MessageCircle, Menu, X } from "lucide-react";
 
 interface NavbarProps {
   onOpenBooking?: () => void;
@@ -13,49 +13,31 @@ export function Navbar({ onOpenBooking }: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-zinc-200 shadow-sm transition-all duration-200">
-      {/* Top Banner (Hours & Studio notice) */}
-      <div className="bg-[#111111] text-white text-xs py-1.5 px-4 hidden sm:block border-b border-[#E86689]/30">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-4 text-zinc-300">
-            <span className="flex items-center gap-1.5 font-medium">
-              <Clock className="w-3.5 h-3.5 text-[#E86689]" />
-              Mon – Sat: 08:00 – 17:00 | Sun: By appointment
-            </span>
-            <span className="text-zinc-500">•</span>
-            <span className="flex items-center gap-1.5 text-zinc-300">
-              <MapPin className="w-3.5 h-3.5 text-[#00A3AD] flex-shrink-0" />
-              In-Studio &amp; Mobile Aesthetics Sanctuary
-            </span>
-          </div>
-          <div className="flex items-center gap-2 text-zinc-300 text-[11px]">
-            <Sparkles className="w-3 h-3 text-[#E86689]" />
-            <span>Massage Therapy • Facials • Body &amp; Skin Aesthetics</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Navbar */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 sm:h-20">
+    <header className="fixed top-3 sm:top-4 left-0 right-0 z-40 px-3 sm:px-6 pointer-events-none">
+      {/* Floating Glassmorphic Dynamic Island */}
+      <nav
+        aria-label="Primary Navigation"
+        className="pointer-events-auto max-w-5xl mx-auto rounded-full bg-white/75 backdrop-blur-2xl border border-white/80 shadow-[0_10px_35px_-10px_rgba(19,80,97,0.18)] ring-1 ring-zinc-900/[0.06] px-4 sm:px-6 py-2 sm:py-2.5 transition-all duration-300"
+      >
+        <div className="flex items-center justify-between gap-4">
           {/* Logo */}
           <Link href="/" className="flex items-center focus:outline-none">
-            <BrandLogo size="md" />
+            <BrandLogo size="sm" />
           </Link>
 
           {/* Desktop Nav Actions */}
           <div className="hidden md:flex items-center gap-6">
             <div className="flex flex-col text-right">
-              <span className="text-[10px] font-extrabold text-[#E86689] uppercase tracking-widest">
-                TOTUS CONCIERGE
+              <span className="text-[10px] font-extrabold text-[#135061] uppercase tracking-widest">
+                TOTUS MASSAGE THERAPIST
               </span>
-              <div className="flex items-center gap-3 mt-0.5">
+              <div className="flex items-center justify-end gap-3 mt-0.5">
                 <a
                   href="tel:0790118464"
-                  className="flex items-center gap-1.5 text-sm font-bold text-zinc-900 hover:text-[#007C89] transition-colors"
-                  title="Call Totus Massage & Aesthetics"
+                  className="flex items-center gap-1.5 text-sm font-bold text-zinc-900 hover:text-[#135061] transition-colors"
+                  title="Call Totus Massage Therapist"
                 >
-                  <Phone className="w-3.5 h-3.5 text-[#007C89]" />
+                  <Phone className="w-3.5 h-3.5 text-[#135061]" />
                   079 011 8464
                 </a>
                 <span className="text-zinc-300">|</span>
@@ -63,10 +45,10 @@ export function Navbar({ onOpenBooking }: NavbarProps) {
                   href="https://wa.me/27790118464"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 text-sm font-bold text-emerald-600 hover:text-emerald-700 transition-colors"
-                  title="Chat on WhatsApp"
+                  className="flex items-center gap-1.5 text-sm font-bold text-zinc-900 hover:text-[#135061] transition-colors"
+                  title="Chat with Totus Massage Therapist on WhatsApp"
                 >
-                  <MessageCircle className="w-3.5 h-3.5" />
+                  <MessageCircle className="w-3.5 h-3.5 text-[#135061]" />
                   WhatsApp
                 </a>
               </div>
@@ -74,7 +56,7 @@ export function Navbar({ onOpenBooking }: NavbarProps) {
 
             <button
               onClick={onOpenBooking}
-              className="inline-flex items-center justify-center px-6 py-3 rounded-full font-bold text-sm text-white bg-gradient-to-r from-[#135061] to-[#007C89] hover:from-[#0E3D4B] hover:to-[#005C66] shadow-md hover:shadow-lg ring-2 ring-[#E86689]/25 transition-all duration-200 active:scale-95"
+              className="inline-flex items-center justify-center px-6 py-2.5 rounded-full font-bold text-sm text-white bg-[#135061] hover:bg-[#007C89] shadow-md hover:shadow-lg transition-all duration-200 active:scale-95"
             >
               Book Appointment
             </button>
@@ -90,46 +72,38 @@ export function Navbar({ onOpenBooking }: NavbarProps) {
             </button>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 text-zinc-700 hover:text-zinc-900 focus:outline-none"
+              className="p-2 rounded-full text-zinc-800 hover:bg-zinc-100/80 focus:outline-none transition-colors"
               aria-label="Toggle Navigation"
             >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
-      </div>
+      </nav>
 
-      {/* Mobile Menu Dropdown */}
+      {/* Mobile Floating Glassmorphic Dropdown */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-white border-b border-zinc-200 px-4 pt-3 pb-6 space-y-4 shadow-xl">
-          <div className="flex flex-col gap-2 pt-2 border-t border-zinc-100">
-            <span className="text-xs font-bold text-[#E86689] uppercase tracking-wider">
-              TOTUS CONCIERGE:
-            </span>
+        <div className="pointer-events-auto md:hidden max-w-5xl mx-auto mt-2 rounded-3xl bg-white/90 backdrop-blur-2xl border border-white/80 ring-1 ring-zinc-900/[0.06] px-5 py-5 space-y-3 shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200">
+          <span className="text-[11px] font-extrabold text-[#135061] uppercase tracking-widest block">
+            TOTUS MASSAGE THERAPIST
+          </span>
+          <div className="flex flex-col gap-2.5 pt-1 border-t border-zinc-200/70">
             <a
               href="tel:0790118464"
-              className="flex items-center gap-2 text-sm font-bold text-zinc-800 hover:text-[#007C89]"
+              className="flex items-center gap-2.5 text-sm font-bold text-zinc-900 hover:text-[#135061] py-1"
             >
-              <Phone className="w-4 h-4 text-[#007C89]" />
+              <Phone className="w-4 h-4 text-[#135061]" />
               Call: 079 011 8464
             </a>
             <a
               href="https://wa.me/27790118464"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 text-sm font-bold text-emerald-600"
+              className="flex items-center gap-2.5 text-sm font-bold text-zinc-900 hover:text-[#135061] py-1"
             >
-              <MessageCircle className="w-4 h-4" />
+              <MessageCircle className="w-4 h-4 text-[#135061]" />
               WhatsApp: 079 011 8464
             </a>
-            <div className="flex items-center gap-1.5 text-xs text-zinc-600 mt-2">
-              <MapPin className="w-3.5 h-3.5 text-[#E86689] flex-shrink-0" />
-              Studio &amp; Mobile Spa Sessions Available
-            </div>
-            <div className="flex items-center gap-1.5 text-xs text-zinc-600">
-              <Clock className="w-3.5 h-3.5 text-[#007C89] flex-shrink-0" />
-              Mon – Sat: 08:00 – 17:00
-            </div>
           </div>
         </div>
       )}

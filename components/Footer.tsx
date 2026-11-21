@@ -5,7 +5,7 @@ import { Phone, MessageCircle, MapPin } from "lucide-react";
 
 export function Footer() {
   return (
-    <footer className="bg-[#111111] text-white pt-6 pb-3 sm:pt-7 sm:pb-4 border-t-4 border-[#E86689]">
+    <footer className="bg-[#111111] text-white pt-6 pb-3 sm:pt-7 sm:pb-4 border-t-4 border-[#135061]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 pb-4 sm:pb-5 border-b border-zinc-800">
           {/* Brand Col */}
@@ -22,15 +22,17 @@ export function Footer() {
 
           {/* Quick Contact */}
           <div className="space-y-2">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-[#E86689]">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-[#00A3AD]">
               Direct Reservations
             </h4>
             <div className="space-y-1.5 text-xs text-zinc-300">
-              <p className="font-bold text-white uppercase tracking-wider">TOTUS CONCIERGE</p>
+              <p className="font-bold text-white uppercase tracking-wider">
+                TOTUS MASSAGE THERAPIST
+              </p>
               <a
                 href="tel:0790118464"
                 className="flex items-center gap-2 hover:text-white transition-colors"
-                title="Call Totus"
+                title="Call Totus Massage Therapist"
               >
                 <Phone className="w-3.5 h-3.5 text-[#00A3AD]" />
                 079 011 8464 (Calls)
@@ -39,14 +41,14 @@ export function Footer() {
                 href="https://wa.me/27790118464"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 text-emerald-400 hover:text-emerald-300 transition-colors"
-                title="WhatsApp Totus"
+                className="flex items-center gap-2 text-zinc-200 hover:text-white transition-colors"
+                title="WhatsApp Totus Massage Therapist"
               >
-                <MessageCircle className="w-3.5 h-3.5" />
+                <MessageCircle className="w-3.5 h-3.5 text-[#00A3AD]" />
                 079 011 8464 (WhatsApp)
               </a>
               <div className="flex items-start gap-2 pt-0.5 text-zinc-400">
-                <MapPin className="w-3.5 h-3.5 text-[#E86689] flex-shrink-0 mt-0.5" />
+                <MapPin className="w-3.5 h-3.5 text-[#00A3AD] flex-shrink-0 mt-0.5" />
                 <span>In-Studio &amp; Mobile Spa Sessions</span>
               </div>
             </div>
@@ -66,7 +68,7 @@ export function Footer() {
                 <span>Saturday:</span>
                 <span className="font-bold text-white">08:00 – 17:00</span>
               </div>
-              <div className="flex justify-between text-[#E86689]">
+              <div className="flex justify-between text-[#00A3AD]">
                 <span>Sunday &amp; Holidays:</span>
                 <span className="font-bold">By appointment</span>
               </div>
@@ -78,7 +80,7 @@ export function Footer() {
 
           {/* Specialties */}
           <div className="space-y-2">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-[#E86689]">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-[#00A3AD]">
               Our Specialties
             </h4>
             <div className="flex flex-wrap gap-1.5 text-[11px] text-zinc-300">

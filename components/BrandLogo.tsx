@@ -15,167 +15,34 @@ export function BrandLogo({
 }: BrandLogoProps) {
   const isDarkMode = isDark || variant === "light";
   const iconSizes = {
-    sm: "w-10 h-10",
-    md: "w-12 h-12",
-    lg: "w-16 h-16",
+    sm: "w-9 h-9",
+    md: "w-11 h-11",
+    lg: "w-14 h-14",
   };
 
   const titleSizes = {
-    sm: "text-xl tracking-[0.14em]",
-    md: "text-2xl tracking-[0.16em]",
+    sm: "text-lg tracking-[0.14em]",
+    md: "text-xl sm:text-2xl tracking-[0.16em]",
     lg: "text-3xl tracking-[0.18em]",
   };
 
   const subSizes = {
-    sm: "text-[8px] tracking-[0.18em]",
-    md: "text-[10px] tracking-[0.22em]",
-    lg: "text-xs tracking-[0.25em]",
+    sm: "text-[7px] tracking-[0.18em]",
+    md: "text-[9px] sm:text-[10px] tracking-[0.2em]",
+    lg: "text-xs tracking-[0.24em]",
   };
 
   return (
-    <div className={`flex items-center gap-3 select-none ${className}`}>
-      {/* Totus Lotus + Zen Medallion + Serene Spa Face & Hands Emblem */}
+    <div className={`flex items-center gap-2.5 sm:gap-3 select-none ${className}`}>
+      {/* Authentic Totus Lotus + Zen Medallion Emblem */}
       <div
         className={`relative ${iconSizes[size]} flex-shrink-0 flex items-center justify-center`}
       >
-        <svg
-          viewBox="0 0 120 120"
-          className="w-full h-full drop-shadow-sm transition-transform duration-300 hover:scale-105"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          {/* Outer Zen Medallion Circle */}
-          <circle
-            cx="60"
-            cy="70"
-            r="43"
-            fill="#FFFFFF"
-            stroke="#135061"
-            strokeWidth="5.5"
-          />
-          {/* Concentric Brush Stroke Arcs */}
-          <path
-            d="M22 62 A38 38 0 0 0 60 108 A38 38 0 0 0 98 62"
-            stroke="#135061"
-            strokeWidth="2.8"
-            strokeLinecap="round"
-          />
-          <path
-            d="M27 77 A34 34 0 0 0 93 77"
-            stroke="#007C89"
-            strokeWidth="2"
-            strokeLinecap="round"
-          />
-
-          {/* Serene Sleeping Woman's Face & Hands Line Art */}
-          {/* Face contour & cheek */}
-          <path
-            d="M44 54 C40 62 43 73 53 78 C61 81 69 77 72 68 C74 62 72 55 68 51"
-            stroke="#135061"
-            strokeWidth="2.2"
-            strokeLinecap="round"
-          />
-          {/* Brows & peaceful closed eyes */}
-          <path
-            d="M45 60 Q49 57 53 59"
-            stroke="#135061"
-            strokeWidth="1.9"
-            strokeLinecap="round"
-          />
-          <path
-            d="M58 56 Q63 54 67 57"
-            stroke="#135061"
-            strokeWidth="1.9"
-            strokeLinecap="round"
-          />
-          <path
-            d="M46 64 Q50 67 54 63"
-            stroke="#135061"
-            strokeWidth="2.1"
-            strokeLinecap="round"
-          />
-          <path
-            d="M59 61 Q63 64 67 60"
-            stroke="#135061"
-            strokeWidth="2.1"
-            strokeLinecap="round"
-          />
-          {/* Nose & serene rose-tinted lips */}
-          <path
-            d="M56 63 Q54 68 57 69"
-            stroke="#135061"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-          />
-          <path
-            d="M55 73 Q59 75 63 72"
-            stroke="#E86689"
-            strokeWidth="2.2"
-            strokeLinecap="round"
-          />
-          {/* Resting hands & delicate fingers */}
-          <path
-            d="M35 83 Q48 80 68 88"
-            stroke="#135061"
-            strokeWidth="2.2"
-            strokeLinecap="round"
-          />
-          <path
-            d="M52 82 L66 89 M50 86 L63 92 M48 90 L60 95"
-            stroke="#135061"
-            strokeWidth="1.9"
-            strokeLinecap="round"
-          />
-          <path
-            d="M84 62 Q78 72 72 83 M87 67 Q81 76 76 85 M89 72 Q84 80 80 87"
-            stroke="#135061"
-            strokeWidth="1.9"
-            strokeLinecap="round"
-          />
-
-          {/* Top 5-Petal Pink Lotus Crown */}
-          <path
-            d="M60 44 C44 38 35 24 38 12 C48 15 56 26 60 44 Z"
-            fill="#C93B67"
-            stroke="#135061"
-            strokeWidth="3.2"
-            strokeLinejoin="round"
-          />
-          <path
-            d="M60 44 C76 38 85 24 82 12 C72 15 64 26 60 44 Z"
-            fill="#C93B67"
-            stroke="#135061"
-            strokeWidth="3.2"
-            strokeLinejoin="round"
-          />
-          <path
-            d="M60 45 C42 46 26 37 22 25 C36 24 50 31 60 45 Z"
-            fill="#E86689"
-            stroke="#135061"
-            strokeWidth="3.2"
-            strokeLinejoin="round"
-          />
-          <path
-            d="M60 45 C78 46 94 37 98 25 C84 24 70 31 60 45 Z"
-            fill="#E86689"
-            stroke="#135061"
-            strokeWidth="3.2"
-            strokeLinejoin="round"
-          />
-          <path
-            d="M60 46 C47 34 47 16 60 4 C73 16 73 34 60 46 Z"
-            fill="#E86689"
-            stroke="#135061"
-            strokeWidth="3.2"
-            strokeLinejoin="round"
-          />
-          <path
-            d="M60 12 C56 22 56 32 60 41"
-            stroke="#F6A5BA"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-          />
-        </svg>
+        <img
+          src="/totus-emblem.png"
+          alt="Totus Massage & Aesthetics Logo"
+          className="w-full h-full object-contain drop-shadow-sm transition-transform duration-300 hover:scale-105"
+        />
       </div>
 
       {variant !== "icon-only" && (
@@ -191,20 +58,20 @@ export function BrandLogo({
           </div>
           <div className="flex items-center gap-1.5 mt-1">
             <span
-              className={`h-[1.5px] w-3.5 rounded-full ${
-                isDarkMode ? "bg-[#E86689]" : "bg-[#135061]"
+              className={`h-[1.5px] w-3 rounded-full ${
+                isDarkMode ? "bg-zinc-400" : "bg-[#135061]"
               }`}
             />
             <span
-              className={`font-extrabold uppercase ${
+              className={`font-extrabold uppercase whitespace-nowrap ${
                 isDarkMode ? "text-white" : "text-zinc-900"
               } ${subSizes[size]}`}
             >
               MASSAGE <span className="text-[#E86689]">&amp;</span> AESTHETICS
             </span>
             <span
-              className={`h-[1.5px] w-3.5 rounded-full ${
-                isDarkMode ? "bg-[#E86689]" : "bg-[#135061]"
+              className={`h-[1.5px] w-3 rounded-full ${
+                isDarkMode ? "bg-zinc-400" : "bg-[#135061]"
               }`}
             />
           </div>
@@ -225,11 +92,10 @@ export function EcgPulseLine({
     <div className={`flex items-center gap-3 ${className}`}>
       <svg
         viewBox="0 0 220 36"
-        className="w-40 h-7"
+        className="w-36 sm:w-40 h-7"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        {/* Serene Botanical Wave & Mini Lotus Accent */}
         <path
           d="M0 18 Q40 8 85 18"
           stroke="#007C89"
@@ -242,7 +108,6 @@ export function EcgPulseLine({
           strokeWidth="2"
           strokeLinecap="round"
         />
-        {/* Mini Center Lotus Motif */}
         <path
           d="M110 26 C100 26 93 20 92 14 C98 14 105 18 110 26 Z"
           fill="#E86689"
@@ -256,7 +121,7 @@ export function EcgPulseLine({
           fill="#D4426E"
         />
       </svg>
-      <div className="flex flex-col">
+      <div className="flex flex-col text-left">
         <span
           className={`font-serif italic text-sm ${
             isDark ? "text-zinc-200" : "text-zinc-700"
@@ -264,7 +129,7 @@ export function EcgPulseLine({
         >
           Serenity, Beauty &amp;
         </span>
-        <span className="font-black text-xs tracking-wider text-[#E86689] uppercase leading-tight">
+        <span className="font-black text-xs tracking-wider text-[#135061] uppercase leading-tight">
           PURE REJUVENATION.
         </span>
       </div>

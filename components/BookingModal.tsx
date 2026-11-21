@@ -424,7 +424,7 @@ export function BookingModal({
             {step === 3 && "Payment & Slot Confirmation"}
           </h2>
           <p className="text-xs text-zinc-400 mt-1">
-            Totus Massage &amp; Aesthetics — Concierge (079 011 8464)
+            Totus Massage &amp; Aesthetics — Massage Therapist (079 011 8464)
           </p>
 
           {/* Stepper Progress Bar */}

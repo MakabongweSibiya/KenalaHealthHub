@@ -68,7 +68,6 @@ async function sendWithFallback(
     errMsg.toLowerCase().includes("not verified") ||
     errMsg.toLowerCase().includes("testing emails");
 
-  // If custom domain is not yet verified in Resend, automatically retry with onboarding@resend.dev
   if (isDomainUnverified && primaryFrom !== FALLBACK_FROM_EMAIL) {
     const fallbackAttempt = await resend.emails.send({
       from: FALLBACK_FROM_EMAIL,
@@ -115,69 +114,108 @@ export async function sendBookingEmails(
   const appUrl =
     process.env.NEXT_PUBLIC_APP_URL?.trim() || "https://kenalahealthhub.co.za";
 
+  const logoEmblemUrl = `${appUrl}/totus-emblem.png`;
+  const googleMapsIconUrl = `${appUrl}/google-maps-icon.png`;
   const mapsUrl = getGoogleMapsUrl(data.address);
   const totalFee = data.amountPaid + data.balanceDue;
-  const cleanWhatsappPhone = data.patientPhone
+  const cleanClientWhatsapp = data.patientPhone
     .replace(/\D/g, "")
     .replace(/^0/, "27");
+  const therapistWhatsappUrl = "https://wa.me/27790118464";
 
-  // 1. CLIENT-PERSPECTIVE EMAIL (Official Receipt & Booking Confirmation for Customer)
+  const fontStack =
+    "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
+
+  const paymentLabel =
+    data.paymentType === "FULL_100" ? "Full Settlement" : "Booking Deposit";
+
+  // 1. CLIENT-PERSPECTIVE EMAIL (Refined Luxury Receipt & Confirmation)
   const clientHtml = `
-    <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border: 1px solid #f3d6e0; border-radius: 16px; overflow: hidden;">
-      <div style="background: #111111; padding: 30px 24px; text-align: center; border-bottom: 4px solid #E86689;">
-        <h1 style="color: #00A3AD; margin: 0; font-size: 26px; letter-spacing: 4px; font-weight: 900;">
+    <div style="font-family: ${fontStack}; max-width: 600px; margin: 0 auto; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden;">
+      <!-- Luxury Header with Authentic Totus Emblem -->
+      <div style="background: #FAF9F6; padding: 30px 24px 24px 24px; text-align: center; border-bottom: 2px solid #135061;">
+        <img
+          src="${logoEmblemUrl}"
+          alt="Totus Massage & Aesthetics"
+          width="76"
+          height="76"
+          style="display: block; margin: 0 auto 12px auto; width: 76px; height: 76px; object-fit: contain;"
+        />
+        <h1 style="color: #135061; margin: 0; font-size: 24px; letter-spacing: 4px; font-weight: 800;">
           TOTUS
         </h1>
-        <p style="color: #ffffff; margin: 6px 0 0 0; font-size: 11px; letter-spacing: 3px; font-weight: bold;">
+        <p style="color: #1e293b; margin: 5px 0 0 0; font-size: 10px; letter-spacing: 2.5px; font-weight: 700;">
           — MASSAGE <span style="color: #E86689;">&amp;</span> AESTHETICS —
         </p>
       </div>
       
-      <div style="padding: 32px 24px;">
-        <div style="background: #FDF2F5; border-left: 4px solid #E86689; padding: 16px; border-radius: 8px; margin-bottom: 24px;">
-          <h2 style="color: #135061; margin: 0 0 6px 0; font-size: 18px;">Official Booking Receipt &amp; Confirmation</h2>
-          <p style="color: #475569; margin: 0; font-size: 14px; line-height: 1.5;">
-            Dear <strong>${data.patientName}</strong>, thank you for choosing <strong>Totus Massage &amp; Aesthetics</strong>. Your payment has been verified and your session is officially reserved.
+      <div style="padding: 28px 24px;">
+        <!-- Clean Intro Card (No Left Pink Bar) -->
+        <div style="background: #FAF9F6; border: 1px solid #e2e8f0; padding: 18px 20px; border-radius: 12px; margin-bottom: 24px;">
+          <h2 style="color: #135061; margin: 0 0 6px 0; font-size: 17px; font-weight: 600;">
+            Booking Receipt &amp; Confirmation
+          </h2>
+          <p style="color: #475569; margin: 0; font-size: 14px; line-height: 1.55; font-weight: 400;">
+            Dear <strong style="color: #0f172a; font-weight: 600;">${data.patientName}</strong>, thank you for choosing Totus Massage &amp; Aesthetics. Your payment has been verified and your session is confirmed.
           </p>
         </div>
 
-        <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px; font-size: 14px;">
+        <!-- Clean Details & Financial Table -->
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px; font-size: 14px; font-family: ${fontStack};">
           <tr>
-            <td style="padding: 11px 0; border-bottom: 1px solid #f1f5f9; color: #64748b;">Receipt / Booking Ref:</td>
-            <td style="padding: 11px 0; border-bottom: 1px solid #f1f5f9; font-weight: bold; color: #135061; text-align: right; font-family: monospace; font-size: 15px;">${data.referenceCode}</td>
+            <td style="padding: 12px 0; border-bottom: 1px solid #f1f5f9; color: #64748b; font-weight: 400;">Booking Reference</td>
+            <td style="padding: 12px 0; border-bottom: 1px solid #f1f5f9; color: #0f172a; text-align: right; font-weight: 600; letter-spacing: 0.3px;">${data.referenceCode}</td>
           </tr>
           <tr>
-            <td style="padding: 11px 0; border-bottom: 1px solid #f1f5f9; color: #64748b;">Reserved Treatment:</td>
-            <td style="padding: 11px 0; border-bottom: 1px solid #f1f5f9; font-weight: 700; color: #0f172a; text-align: right;">${data.serviceName}</td>
+            <td style="padding: 12px 0; border-bottom: 1px solid #f1f5f9; color: #64748b; font-weight: 400;">Reserved Treatment</td>
+            <td style="padding: 12px 0; border-bottom: 1px solid #f1f5f9; color: #0f172a; text-align: right; font-weight: 600;">${data.serviceName}</td>
           </tr>
           <tr>
-            <td style="padding: 11px 0; border-bottom: 1px solid #f1f5f9; color: #64748b;">Date &amp; Time Slot:</td>
-            <td style="padding: 11px 0; border-bottom: 1px solid #f1f5f9; font-weight: 700; color: #0f172a; text-align: right;">${data.appointmentDate} at ${data.timeSlot}</td>
+            <td style="padding: 12px 0; border-bottom: 1px solid #f1f5f9; color: #64748b; font-weight: 400;">Date &amp; Time Slot</td>
+            <td style="padding: 12px 0; border-bottom: 1px solid #f1f5f9; color: #0f172a; text-align: right; font-weight: 600;">${data.appointmentDate} at ${data.timeSlot}</td>
           </tr>
           <tr>
-            <td style="padding: 11px 0; border-bottom: 1px solid #f1f5f9; color: #64748b;">Session Location:</td>
-            <td style="padding: 11px 0; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0f172a; text-align: right;">
-              ${data.address}<br/>
-              <a href="${mapsUrl}" style="color: #007C89; font-size: 12px; text-decoration: underline;">Open Location in Google Maps ↗</a>
+            <td style="padding: 12px 0; border-bottom: 1px solid #f1f5f9; color: #64748b; font-weight: 400; vertical-align: middle;">Session Location</td>
+            <td style="padding: 12px 0; border-bottom: 1px solid #f1f5f9; color: #0f172a; text-align: right; font-weight: 600; vertical-align: middle;">
+              <table cellpadding="0" cellspacing="0" border="0" align="right" style="margin-left: auto;">
+                <tr>
+                  <td style="padding-right: 8px; text-align: right; color: #0f172a; font-size: 14px; font-weight: 600; line-height: 1.4;">
+                    ${data.address}
+                  </td>
+                  <td style="vertical-align: middle;">
+                    <a
+                      href="${mapsUrl}"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title="Open Location in Google Maps"
+                      style="display: inline-block; padding: 6px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; text-decoration: none; line-height: 0;"
+                    >
+                      <img
+                        src="${googleMapsIconUrl}"
+                        alt="Google Maps"
+                        width="20"
+                        height="20"
+                        style="display: block; width: 20px; height: 20px; border: 0;"
+                      />
+                    </a>
+                  </td>
+                </tr>
+              </table>
             </td>
           </tr>
           <tr>
-            <td style="padding: 11px 0; border-bottom: 1px solid #f1f5f9; color: #64748b;">Total Treatment Fee:</td>
-            <td style="padding: 11px 0; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0f172a; text-align: right;">R${totalFee.toFixed(2)}</td>
+            <td style="padding: 12px 0; border-bottom: 1px solid #f1f5f9; color: #64748b; font-weight: 400;">Total Treatment Fee</td>
+            <td style="padding: 12px 0; border-bottom: 1px solid #f1f5f9; color: #0f172a; text-align: right; font-weight: 600;">R${totalFee.toFixed(2)}</td>
           </tr>
           <tr>
-            <td style="padding: 11px 0; border-bottom: 1px solid #f1f5f9; color: #64748b;">Amount Paid (PayFast):</td>
-            <td style="padding: 11px 0; border-bottom: 1px solid #f1f5f9; font-weight: bold; color: #16a34a; text-align: right;">
-              R${data.amountPaid.toFixed(2)} (${
-    data.paymentType === "FULL_100" ? "100% Full Settlement" : "R200 Booking Deposit"
-  })
+            <td style="padding: 12px 0; border-bottom: 1px solid #f1f5f9; color: #64748b; font-weight: 400;">Amount Paid (PayFast)</td>
+            <td style="padding: 12px 0; border-bottom: 1px solid #f1f5f9; color: #135061; text-align: right; font-weight: 700;">
+              R${data.amountPaid.toFixed(2)} <span style="color: #64748b; font-weight: 500; font-size: 13px;">(${paymentLabel})</span>
             </td>
           </tr>
           <tr>
-            <td style="padding: 11px 0; border-bottom: 1px solid #f1f5f9; color: #64748b;">Remaining Balance at Visit:</td>
-            <td style="padding: 11px 0; border-bottom: 1px solid #f1f5f9; font-weight: bold; color: ${
-              data.balanceDue > 0 ? "#D4426E" : "#16a34a"
-            }; text-align: right;">
+            <td style="padding: 12px 0; border-bottom: 1px solid #f1f5f9; color: #64748b; font-weight: 400;">Remaining Balance at Visit</td>
+            <td style="padding: 12px 0; border-bottom: 1px solid #f1f5f9; color: #475569; text-align: right; font-weight: 600;">
               R${data.balanceDue.toFixed(2)}
             </td>
           </tr>
@@ -185,16 +223,25 @@ export async function sendBookingEmails(
 
         ${
           data.prepInstructions
-            ? `<div style="background: #F0F9FA; border: 1px solid #B2E2E6; padding: 14px; border-radius: 10px; margin-bottom: 24px;">
-                <strong style="color: #135061; font-size: 13px; display: block; margin-bottom: 4px;">Session Preparation Notes:</strong>
-                <span style="color: #334155; font-size: 13px; line-height: 1.5;">${data.prepInstructions}</span>
+            ? `<div style="background: #F0F9FA; border: 1px solid #B2E2E6; padding: 15px 18px; border-radius: 10px; margin-bottom: 24px;">
+                <strong style="color: #135061; font-size: 13px; display: block; margin-bottom: 4px; font-weight: 600;">Session Preparation Notes</strong>
+                <span style="color: #334155; font-size: 13px; line-height: 1.55;">${data.prepInstructions}</span>
               </div>`
             : ""
         }
 
-        <div style="border-top: 1px solid #e2e8f0; padding-top: 20px; font-size: 13px; color: #64748b;">
-          <p style="margin: 0 0 6px 0;"><strong>Totus Concierge (Call &amp; WhatsApp):</strong> 079 011 8464</p>
-          <p style="margin: 0;"><strong>Email Inquiries:</strong> totusmassages@gmail.com</p>
+        <!-- Direct Therapist Contact with Clickable Call & WhatsApp API Links -->
+        <div style="border-top: 1px solid #e2e8f0; padding-top: 20px; font-size: 13px; color: #64748b; line-height: 1.7;">
+          <p style="margin: 0 0 6px 0;">
+            <strong style="color: #0f172a; font-weight: 600;">Totus Therapist (Call &amp; WhatsApp):</strong>
+            <a href="tel:0790118464" style="color: #135061; text-decoration: none; font-weight: 600;">079 011 8464</a>
+            &nbsp;•&nbsp;
+            <a href="${therapistWhatsappUrl}" target="_blank" rel="noopener noreferrer" style="color: #135061; text-decoration: underline; font-weight: 600;">Message on WhatsApp</a>
+          </p>
+          <p style="margin: 0;">
+            <strong style="color: #0f172a; font-weight: 600;">Email Inquiries:</strong>
+            <a href="mailto:totusmassages@gmail.com" style="color: #475569; text-decoration: none;">totusmassages@gmail.com</a>
+          </p>
         </div>
       </div>
       
@@ -206,92 +253,123 @@ export async function sendBookingEmails(
 
   // 2. ADMIN/OWNER-PERSPECTIVE EMAIL (Sent to totusmassages@gmail.com)
   const adminHtml = `
-    <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 16px; overflow: hidden;">
-      <div style="background: #135061; padding: 24px; text-align: center; border-bottom: 4px solid #E86689;">
-        <span style="background: #E86689; color: #ffffff; font-size: 10px; font-weight: bold; padding: 4px 10px; border-radius: 99px; letter-spacing: 1px; text-transform: uppercase;">
-          Owner / Admin Notification
-        </span>
-        <h1 style="color: #ffffff; margin: 10px 0 0 0; font-size: 22px; font-weight: 800;">
+    <div style="font-family: ${fontStack}; max-width: 600px; margin: 0 auto; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden;">
+      <!-- Owner Notification Header with Authentic Logo -->
+      <div style="background: #FAF9F6; padding: 26px 24px 20px 24px; text-align: center; border-bottom: 2px solid #135061;">
+        <img
+          src="${logoEmblemUrl}"
+          alt="Totus Massage & Aesthetics"
+          width="64"
+          height="64"
+          style="display: block; margin: 0 auto 10px auto; width: 64px; height: 64px; object-fit: contain;"
+        />
+        <h1 style="color: #135061; margin: 0; font-size: 20px; font-weight: 700;">
           New Paid Booking Received
         </h1>
-        <p style="color: #B2E2E6; margin: 4px 0 0 0; font-size: 12px;">
-          Reference: <strong>${data.referenceCode}</strong> • PayFast Verified
+        <p style="color: #64748b; margin: 5px 0 0 0; font-size: 12px; font-weight: 500;">
+          Booking Reference: <strong style="color: #0f172a;">${data.referenceCode}</strong> • PayFast Verified
         </p>
       </div>
 
-      <div style="padding: 28px 24px;">
-        <h3 style="color: #135061; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 12px 0; border-bottom: 2px solid #f1f5f9; padding-bottom: 6px;">
-          1. Client Details &amp; Quick Contact
+      <div style="padding: 26px 24px;">
+        <h3 style="color: #135061; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 10px 0; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; font-weight: 700;">
+          1. Client Details &amp; Contact
         </h3>
-        <table style="width: 100%; border-collapse: collapse; margin-bottom: 22px; font-size: 14px;">
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 22px; font-size: 14px; font-family: ${fontStack};">
           <tr>
-            <td style="padding: 8px 0; color: #64748b;">Client Full Name:</td>
-            <td style="padding: 8px 0; font-weight: bold; color: #0f172a; text-align: right;">${data.patientName}</td>
+            <td style="padding: 8px 0; color: #64748b;">Client Full Name</td>
+            <td style="padding: 8px 0; font-weight: 600; color: #0f172a; text-align: right;">${data.patientName}</td>
           </tr>
           <tr>
-            <td style="padding: 8px 0; color: #64748b;">WhatsApp / Phone:</td>
-            <td style="padding: 8px 0; font-weight: bold; text-align: right;">
-              <a href="https://wa.me/${cleanWhatsappPhone}" style="color: #16a34a; text-decoration: underline;">${data.patientPhone} (Chat on WhatsApp ↗)</a>
+            <td style="padding: 8px 0; color: #64748b;">WhatsApp / Phone</td>
+            <td style="padding: 8px 0; font-weight: 600; text-align: right;">
+              <a href="tel:${data.patientPhone.replace(/\s+/g, "")}" style="color: #0f172a; text-decoration: none;">${data.patientPhone}</a>
+              &nbsp;•&nbsp;
+              <a href="https://wa.me/${cleanClientWhatsapp}" target="_blank" rel="noopener noreferrer" style="color: #135061; text-decoration: underline;">WhatsApp Client</a>
             </td>
           </tr>
           <tr>
-            <td style="padding: 8px 0; color: #64748b;">Client Email:</td>
-            <td style="padding: 8px 0; font-weight: 600; color: #0f172a; text-align: right;">
-              <a href="mailto:${data.patientEmail}" style="color: #007C89;">${data.patientEmail}</a>
+            <td style="padding: 8px 0; color: #64748b;">Client Email</td>
+            <td style="padding: 8px 0; font-weight: 500; color: #0f172a; text-align: right;">
+              <a href="mailto:${data.patientEmail}" style="color: #475569; text-decoration: none;">${data.patientEmail}</a>
             </td>
           </tr>
         </table>
 
-        <h3 style="color: #135061; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 12px 0; border-bottom: 2px solid #f1f5f9; padding-bottom: 6px;">
+        <h3 style="color: #135061; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 10px 0; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; font-weight: 700;">
           2. Treatment, Schedule &amp; Location
         </h3>
-        <table style="width: 100%; border-collapse: collapse; margin-bottom: 22px; font-size: 14px;">
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 22px; font-size: 14px; font-family: ${fontStack};">
           <tr>
-            <td style="padding: 8px 0; color: #64748b;">Treatment Booked:</td>
-            <td style="padding: 8px 0; font-weight: bold; color: #D4426E; text-align: right;">${data.serviceName}</td>
+            <td style="padding: 8px 0; color: #64748b;">Treatment Booked</td>
+            <td style="padding: 8px 0; font-weight: 600; color: #0f172a; text-align: right;">${data.serviceName}</td>
           </tr>
           <tr>
-            <td style="padding: 8px 0; color: #64748b;">Date &amp; Time Slot:</td>
-            <td style="padding: 8px 0; font-weight: bold; color: #0f172a; text-align: right;">${data.appointmentDate} (${data.timeSlot})</td>
+            <td style="padding: 8px 0; color: #64748b;">Date &amp; Time Slot</td>
+            <td style="padding: 8px 0; font-weight: 600; color: #0f172a; text-align: right;">${data.appointmentDate} (${data.timeSlot})</td>
           </tr>
           <tr>
-            <td style="padding: 8px 0; color: #64748b;">Location / Address:</td>
-            <td style="padding: 8px 0; font-weight: 600; color: #0f172a; text-align: right;">
-              ${data.address}<br/>
-              <a href="${mapsUrl}" style="color: #007C89; font-size: 12px; font-weight: bold;">Navigate on Google Maps ↗</a>
+            <td style="padding: 8px 0; color: #64748b; vertical-align: middle;">Session Location</td>
+            <td style="padding: 8px 0; font-weight: 600; color: #0f172a; text-align: right; vertical-align: middle;">
+              <table cellpadding="0" cellspacing="0" border="0" align="right" style="margin-left: auto;">
+                <tr>
+                  <td style="padding-right: 8px; text-align: right; color: #0f172a; font-size: 14px; font-weight: 600;">
+                    ${data.address}
+                  </td>
+                  <td style="vertical-align: middle;">
+                    <a
+                      href="${mapsUrl}"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title="Navigate with Google Maps"
+                      style="display: inline-block; padding: 6px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; text-decoration: none; line-height: 0;"
+                    >
+                      <img
+                        src="${googleMapsIconUrl}"
+                        alt="Google Maps"
+                        width="20"
+                        height="20"
+                        style="display: block; width: 20px; height: 20px; border: 0;"
+                      />
+                    </a>
+                  </td>
+                </tr>
+              </table>
             </td>
           </tr>
           ${
             data.medicalNotes
               ? `<tr>
-                  <td style="padding: 8px 0; color: #64748b;">Client Notes / Requests:</td>
-                  <td style="padding: 8px 0; font-weight: 600; color: #b45309; text-align: right;">${data.medicalNotes}</td>
+                  <td style="padding: 8px 0; color: #64748b;">Client Notes / Preferences</td>
+                  <td style="padding: 8px 0; font-weight: 500; color: #334155; text-align: right;">${data.medicalNotes}</td>
                 </tr>`
               : ""
           }
         </table>
 
-        <h3 style="color: #135061; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 12px 0; border-bottom: 2px solid #f1f5f9; padding-bottom: 6px;">
+        <h3 style="color: #135061; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 10px 0; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; font-weight: 700;">
           3. Financial Settlement Summary
         </h3>
-        <table style="width: 100%; border-collapse: collapse; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; margin-bottom: 24px; font-size: 14px;">
+        <table style="width: 100%; border-collapse: collapse; background: #FAF9F6; border: 1px solid #e2e8f0; border-radius: 12px; margin-bottom: 24px; font-size: 14px;">
           <tr>
-            <td style="padding: 12px 16px; color: #64748b; border-bottom: 1px solid #e2e8f0;">Total Treatment Fee:</td>
-            <td style="padding: 12px 16px; font-weight: bold; color: #0f172a; text-align: right; border-bottom: 1px solid #e2e8f0;">R${totalFee.toFixed(2)}</td>
+            <td style="padding: 12px 16px; color: #64748b; border-bottom: 1px solid #e2e8f0;">Total Treatment Fee</td>
+            <td style="padding: 12px 16px; font-weight: 600; color: #0f172a; text-align: right; border-bottom: 1px solid #e2e8f0;">R${totalFee.toFixed(2)}</td>
           </tr>
           <tr>
-            <td style="padding: 12px 16px; color: #64748b; border-bottom: 1px solid #e2e8f0;">Paid Now via PayFast:</td>
-            <td style="padding: 12px 16px; font-weight: bold; color: #16a34a; text-align: right; border-bottom: 1px solid #e2e8f0;">R${data.amountPaid.toFixed(2)}</td>
+            <td style="padding: 12px 16px; color: #64748b; border-bottom: 1px solid #e2e8f0;">Paid Now via PayFast</td>
+            <td style="padding: 12px 16px; font-weight: 700; color: #135061; text-align: right; border-bottom: 1px solid #e2e8f0;">
+              R${data.amountPaid.toFixed(2)} <span style="color: #64748b; font-weight: 500; font-size: 13px;">(${paymentLabel})</span>
+            </td>
           </tr>
           <tr>
-            <td style="padding: 12px 16px; color: #64748b;">Balance to Collect at Session:</td>
-            <td style="padding: 12px 16px; font-weight: bold; color: #D4426E; text-align: right;">R${data.balanceDue.toFixed(2)}</td>
+            <td style="padding: 12px 16px; color: #64748b;">Balance to Collect at Session</td>
+            <td style="padding: 12px 16px; font-weight: 600; color: #475569; text-align: right;">R${data.balanceDue.toFixed(2)}</td>
           </tr>
         </table>
 
         <div style="text-align: center;">
-          <a href="${appUrl}/admin/dashboard" style="display: inline-block; background: #135061; color: #ffffff; font-weight: bold; font-size: 13px; padding: 13px 28px; border-radius: 99px; text-decoration: none;">
-            Manage Booking in Admin Portal ↗
+          <a href="${appUrl}/admin/dashboard" style="display: inline-block; background: #135061; color: #ffffff; font-weight: 600; font-size: 13px; padding: 13px 28px; border-radius: 99px; text-decoration: none;">
+            Manage Booking in Admin Portal
           </a>
         </div>
       </div>
@@ -308,7 +386,7 @@ export async function sendBookingEmails(
   try {
     const resend = new Resend(apiKey);
 
-    // 1. Send Client-Perspective Receipt to the Client
+    // 1. Send Client-Perspective Receipt
     const clientRes = await sendWithFallback(resend, primaryFrom, {
       to: data.patientEmail,
       replyTo: adminEmail,
@@ -316,11 +394,11 @@ export async function sendBookingEmails(
       html: clientHtml,
     });
 
-    // 2. Send Admin/Owner-Perspective Alert to totusmassages@gmail.com
+    // 2. Send Admin/Owner-Perspective Notification
     const adminRes = await sendWithFallback(resend, primaryFrom, {
       to: adminEmail,
       replyTo: data.patientEmail,
-      subject: `🌸 New Paid Booking: ${data.patientName} — ${data.serviceName} [${data.referenceCode}]`,
+      subject: `New Paid Booking: ${data.patientName} — ${data.serviceName} (${data.referenceCode})`,
       html: adminHtml,
     });
 

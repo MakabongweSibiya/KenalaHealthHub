@@ -164,8 +164,8 @@ function BookingSuccessContent() {
                 <span>Instant PayFast Verification Complete</span>
               </div>
               <div className="flex items-center gap-2 p-3 rounded-xl bg-zinc-50 text-zinc-700 border border-zinc-200 text-xs font-semibold">
-                <span className="w-2 h-2 rounded-full bg-[#E86689]" />
-                <span>WhatsApp Notification Sent to Totus Concierge (079 011 8464)</span>
+                <span className="w-2 h-2 rounded-full bg-[#135061]" />
+                <span>WhatsApp Notification Sent to Totus Massage Therapist (079 011 8464)</span>
               </div>
             </div>
 
