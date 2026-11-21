@@ -14,7 +14,7 @@ function generateRefCode(): string {
   for (let i = 0; i < 4; i++) {
     random += chars.charAt(Math.floor(Math.random() * chars.length));
   }
-  return `KHH-${new Date().getFullYear().toString().slice(-2)}${random}`;
+  return `TOT-${new Date().getFullYear().toString().slice(-2)}${random}`;
 }
 
 export async function POST(req: Request) {
@@ -26,7 +26,7 @@ export async function POST(req: Request) {
       patientPhone,
       patientEmail,
       patientAddress,
-      area = "Nellmapius",
+      area = "Pretoria",
       appointmentDate,
       timeSlot,
       paymentChoice = "RETAINER_30",
@@ -92,7 +92,7 @@ export async function POST(req: Request) {
         {
           error:
             addressResult.error ||
-            "Please provide a valid, verifiable street address or select a clinic location.",
+            "Please provide a valid, verifiable street address or select a studio location.",
         },
         { status: 400 }
       );
@@ -104,7 +104,7 @@ export async function POST(req: Request) {
 
     if (!service || !service.isActive) {
       return NextResponse.json(
-        { error: "Selected clinical service is currently unavailable." },
+        { error: "Selected treatment or product is currently unavailable." },
         { status: 404 }
       );
     }
@@ -149,13 +149,13 @@ export async function POST(req: Request) {
     });
 
     // Prepare PayFast parameters
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://kenalahealthhub.co.za";
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://totusmassages.co.za";
     const merchantId = process.env.PAYFAST_MERCHANT_ID || "10000100";
     const merchantKey = process.env.PAYFAST_MERCHANT_KEY || "46f0cd694581a";
     const passphrase = (process.env.PAYFAST_PASSPHRASE || "").trim();
 
     const nameParts = nameResult.formatted.split(" ");
-    const nameFirst = nameParts[0] || "Patient";
+    const nameFirst = nameParts[0] || "Valued";
     const nameLast = nameParts.slice(1).join(" ") || "Client";
 
     const payfastData: Record<string, string> = {
@@ -169,8 +169,8 @@ export async function POST(req: Request) {
       email_address: trimmedEmail,
       m_payment_id: referenceCode,
       amount: amountToPay.toFixed(2),
-      item_name: `Kenala Health Hub - ${service.name} - ${
-        paymentChoice === "FULL_100" ? "Full Fee" : "R200 Deposit"
+      item_name: `Totus Massage & Aesthetics - ${service.name} - ${
+        isProduct || paymentChoice === "FULL_100" ? "Full Fee" : "R200 Deposit"
       }`,
       item_description: `Appointment on ${appointmentDate} at ${timeSlot} for ${nameResult.formatted}`,
       custom_str1: booking.id,

@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: kenala-health-hub
+    name: totus-massages
     runtime: node
     plan: free
     region: ohio
@@ -14,7 +14,7 @@ services:
       - key: DATABASE_URL
         sync: false
       - key: NEXT_PUBLIC_APP_URL
-        value: https://kenalahealthhub.co.za
+        value: https://totusmassages.co.za
       - key: PAYFAST_SANDBOX
         value: "false"
       - key: PAYFAST_MERCHANT_ID
@@ -28,4 +28,4 @@ services:
       - key: ADMIN_NOTIFICATION_WHATSAPP
         value: "27790118464"
       - key: ADMIN_NOTIFICATION_EMAIL
-        value: "info@kenalahealthhub.co.za"
+        value: "totusmassages@gmail.com"

@@ -108,11 +108,11 @@ export async function sendBookingEmails(
   const apiKey = process.env.RESEND_API_KEY?.trim();
   const primaryFrom =
     process.env.RESEND_FROM_EMAIL?.trim() ||
-    "Totus Massage & Aesthetics <noreply@kenalahealthhub.co.za>";
+    "Totus Massage & Aesthetics <noreply@totusmassages.co.za>";
   const adminEmail =
     process.env.ADMIN_NOTIFICATION_EMAIL?.trim() || "totusmassages@gmail.com";
   const appUrl =
-    process.env.NEXT_PUBLIC_APP_URL?.trim() || "https://kenalahealthhub.co.za";
+    process.env.NEXT_PUBLIC_APP_URL?.trim() || "https://totusmassages.co.za";
 
   const logoEmblemUrl = `${appUrl}/totus-emblem.png`;
   const googleMapsIconUrl = `${appUrl}/google-maps-icon.png`;

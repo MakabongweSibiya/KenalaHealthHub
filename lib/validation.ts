@@ -12,23 +12,23 @@ export interface ClinicLocationInfo {
 export const CLINIC_OPTIONS: ClinicLocationInfo[] = [
   {
     id: "nellmapius_clinic",
-    label: "Nellmapius Clinic (In-Clinic Visit)",
+    label: "Totus Studio — Location 1 (In-Studio)",
     type: "CLINIC",
-    area: "Nellmapius",
-    defaultAddress: "Corner Love Drive & Alwyn Street, Ext 4, Nellmapius, Pretoria",
-    mapsQuery: "Corner Love Drive and Alwyn Street, Ext 4, Nellmapius, Pretoria, South Africa",
+    area: "Pretoria East",
+    defaultAddress: "Totus Massage & Aesthetics Studio, Pretoria East",
+    mapsQuery: "Pretoria East, Pretoria, South Africa",
   },
   {
     id: "moreleta_clinic",
-    label: "Moreleta Park Clinic (In-Clinic Visit)",
+    label: "Totus Studio — Location 2 (In-Studio)",
     type: "CLINIC",
     area: "Moreleta Park",
-    defaultAddress: "Moreleta Park Clinic Hub, Pretoria East, Pretoria",
+    defaultAddress: "Totus Studio, Moreleta Park, Pretoria East",
     mapsQuery: "Moreleta Park, Pretoria East, Pretoria, South Africa",
   },
   {
     id: "mobile_visit",
-    label: "Mobile Home Visit (Nurse Comes to Your Address)",
+    label: "Mobile Spa Visit (Therapist Comes to Your Address)",
     type: "MOBILE",
     area: "Pretoria East",
     defaultAddress: "",
@@ -180,7 +180,7 @@ export function validatePhysicalAddress(input: string): {
     return {
       isValid: false,
       formatted: trimmed,
-      error: "Please enter a valid street address including street name and number/suburb (e.g. 14 Alwyn Street, Nellmapius).",
+      error: "Please enter a valid street address including street name and number/suburb (e.g. 14 Lois Avenue, Menlyn, Pretoria).",
     };
   }
 

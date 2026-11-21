@@ -1,5 +1,5 @@
 /**
- * Kenala Health Hub - Phone Validation & Formatting Utilities
+ * Totus Massage & Aesthetics - Phone Validation & Formatting Utilities
  * Handles South African (and international) phone numbers for UI, Database, WhatsApp, and PayFast.
  */
 

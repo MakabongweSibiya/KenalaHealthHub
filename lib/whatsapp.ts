@@ -13,23 +13,23 @@ export interface WhatsAppBookingNotification {
 }
 
 export async function sendAdminWhatsAppNotification(data: WhatsAppBookingNotification) {
-  const adminNumber = process.env.ADMIN_NOTIFICATION_WHATSAPP || "27790118464"; // Sr Grace
+  const adminNumber = process.env.ADMIN_NOTIFICATION_WHATSAPP || "27790118464"; // Totus Massage Therapist
   const formattedAmount = `R${data.amountPaid.toFixed(2)}`;
   const formattedBalance = `R${data.balanceDue.toFixed(2)}`;
 
-  const messageBody = `🚨 *NEW BOOKING CONFIRMED — KENALA HEALTH HUB*\n\n` +
-    `📋 *Ref:* ${data.referenceCode}\n` +
-    `🩺 *Service:* ${data.serviceName}\n` +
-    `📅 *Date:* ${data.appointmentDate}\n` +
-    `⏰ *Time Slot:* ${data.timeSlot}\n\n` +
-    `👤 *Patient:* ${data.patientName}\n` +
-    `📞 *Phone:* ${data.patientPhone}\n` +
-    `📍 *Address:* ${data.address}\n\n` +
-    `💳 *Payment:* ${data.paymentType === "FULL_100" ? "Full Payment (100%)" : "R200 Booking Deposit"}\n` +
-    `✅ *Paid via PayFast:* ${formattedAmount}\n` +
-    `💵 *Balance Due on Visit:* ${formattedBalance}\n` +
-    (data.medicalNotes ? `📝 *Notes:* ${data.medicalNotes}\n\n` : `\n`) +
-    `_Care • Compassion • Community_`;
+  const messageBody = `*NEW BOOKING CONFIRMED — TOTUS MASSAGE & AESTHETICS*\n\n` +
+    `*Ref:* ${data.referenceCode}\n` +
+    `*Treatment:* ${data.serviceName}\n` +
+    `*Date:* ${data.appointmentDate}\n` +
+    `*Time Slot:* ${data.timeSlot}\n\n` +
+    `*Client:* ${data.patientName}\n` +
+    `*Phone:* ${data.patientPhone}\n` +
+    `*Location:* ${data.address}\n\n` +
+    `*Payment:* ${data.paymentType === "FULL_100" ? "Full Payment (100%)" : "Booking Deposit"}\n` +
+    `*Paid:* ${formattedAmount}\n` +
+    `*Balance Due on Visit:* ${formattedBalance}\n` +
+    (data.medicalNotes ? `*Notes:* ${data.medicalNotes}\n\n` : `\n`) +
+    `_Serenity, Beauty & Pure Rejuvenation_`;
 
   console.log(`[WhatsApp Service] Dispatching alert to Admin (${adminNumber}):`);
   console.log(messageBody);
@@ -83,6 +83,6 @@ export async function sendAdminWhatsAppNotification(data: WhatsAppBookingNotific
 
 export function generateDirectWhatsAppLink(data: WhatsAppBookingNotification): string {
   const adminNumber = process.env.ADMIN_NOTIFICATION_WHATSAPP || "27790118464";
-  const text = `Hello Sr Grace, I have reserved appointment ${data.referenceCode} for ${data.serviceName} on ${data.appointmentDate} at ${data.timeSlot}. Thank you!`;
+  const text = `Hello Totus Massage & Aesthetics, I have reserved appointment ${data.referenceCode} for ${data.serviceName} on ${data.appointmentDate} at ${data.timeSlot}. Thank you!`;
   return `https://wa.me/${adminNumber}?text=${encodeURIComponent(text)}`;
 }

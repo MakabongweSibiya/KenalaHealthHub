@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
-const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://kenalahealthhub.co.za";
+const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://totusmassages.co.za";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

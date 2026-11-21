@@ -49,9 +49,9 @@ export function SuccessModal({ isOpen, onClose, booking }: SuccessModalProps) {
   };
 
   const downloadCalendarFile = () => {
-    const title = `Appointment with Sr Grace (${booking.service?.name || "Consultation"})`;
-    const description = `Kenala Health Hub Appointment. Reference: ${booking.referenceCode}. Address: ${booking.patientAddress || "Nellmapius Clinic Hub"}. Contact: 079 011 8464.`;
-    const location = booking.patientAddress || "Nellmapius Clinic Hub, Pretoria";
+    const title = `Totus Massage & Aesthetics (${booking.service?.name || "Treatment"})`;
+    const description = `Totus Massage & Aesthetics Appointment. Reference: ${booking.referenceCode}. Address: ${booking.patientAddress || "Totus Studio"}. Contact: 079 011 8464.`;
+    const location = booking.patientAddress || "Totus Massage & Aesthetics Studio";
 
     // Format iCalendar date
     const dateStr = booking.appointmentDate?.replace(/-/g, "") || "20261021";
@@ -61,7 +61,7 @@ export function SuccessModal({ isOpen, onClose, booking }: SuccessModalProps) {
     const icsContent = [
       "BEGIN:VCALENDAR",
       "VERSION:2.0",
-      "PRODID:-//Kenala Health Hub//Booking//EN",
+      "PRODID:-//Totus Massage & Aesthetics//Booking//EN",
       "BEGIN:VEVENT",
       `SUMMARY:${title}`,
       `DESCRIPTION:${description}`,
@@ -76,14 +76,14 @@ export function SuccessModal({ isOpen, onClose, booking }: SuccessModalProps) {
     const blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8" });
     const link = document.createElement("a");
     link.href = window.URL.createObjectURL(blob);
-    link.setAttribute("download", `Appointment-${booking.referenceCode}.ics`);
+    link.setAttribute("download", `Totus-Appointment-${booking.referenceCode}.ics`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
   const whatsappUrl = `https://wa.me/27790118464?text=${encodeURIComponent(
-    `Hello Sr Grace, I have confirmed booking ${booking.referenceCode} for ${booking.service?.name || "healthcare appointment"} on ${booking.appointmentDate} at ${booking.timeSlot}. Looking forward to the appointment!`
+    `Hello Totus Massage & Aesthetics, I have confirmed booking ${booking.referenceCode} for ${booking.service?.name || "my treatment"} on ${booking.appointmentDate} at ${booking.timeSlot}. Looking forward to my session!`
   )}`;
 
   return (
@@ -138,40 +138,40 @@ export function SuccessModal({ isOpen, onClose, booking }: SuccessModalProps) {
         <div className="p-6 space-y-4 max-h-[60vh] overflow-y-auto">
           {/* Dispatch Badges */}
           <div className="space-y-2">
-            <div className="flex items-center gap-2 p-2.5 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-100 text-xs font-semibold">
-              <span className="w-2 h-2 rounded-full bg-emerald-500" />
-              <span>Direct WhatsApp Alert Dispatched to Sr Grace (079 011 8464)</span>
+            <div className="flex items-center gap-2 p-2.5 rounded-xl bg-teal-50/70 text-[#135061] border border-teal-100 text-xs font-semibold">
+              <span className="w-2 h-2 rounded-full bg-[#135061]" />
+              <span>Direct WhatsApp Alert Dispatched to Totus Massage Therapist (079 011 8464)</span>
             </div>
             <div className="flex items-center gap-2 p-2.5 rounded-xl bg-zinc-50 text-zinc-700 border border-zinc-200 text-xs font-semibold">
               <span className="w-2 h-2 rounded-full bg-[#007C89]" />
-              <span>Confirmation Email Sent to {booking.patientEmail || "Patient"}</span>
+              <span>Confirmation Email Sent to {booking.patientEmail || "Client"}</span>
             </div>
           </div>
 
           {/* Summary Details */}
           <div className="bg-zinc-50 rounded-2xl p-4 border border-zinc-200 text-xs space-y-2">
             <div className="flex justify-between items-center py-1 border-b border-zinc-200/60">
-              <span className="text-zinc-500 font-medium">Clinical Service:</span>
-              <strong className="text-zinc-900">{booking.service?.name || "Consultation"}</strong>
+              <span className="text-zinc-500 font-medium">Treatment / Service:</span>
+              <strong className="text-zinc-900">{booking.service?.name || "Treatment"}</strong>
             </div>
             <div className="flex justify-between items-center py-1 border-b border-zinc-200/60">
               <span className="text-zinc-500 font-medium">Date & Time:</span>
               <strong className="text-zinc-900">{booking.appointmentDate} at {booking.timeSlot}</strong>
             </div>
             <div className="flex justify-between items-center py-1 border-b border-zinc-200/60">
-              <span className="text-zinc-500 font-medium">Patient:</span>
+              <span className="text-zinc-500 font-medium">Client:</span>
               <strong className="text-zinc-900">{booking.patientName} ({booking.patientPhone})</strong>
             </div>
             <div className="flex justify-between items-center py-1 border-b border-zinc-200/60">
               <span className="text-zinc-500 font-medium">Location:</span>
-              <strong className="text-zinc-900">{booking.patientAddress || "Clinic Hub, Nellmapius"}</strong>
+              <strong className="text-zinc-900">{booking.patientAddress || "Totus Studio"}</strong>
             </div>
             <div className="flex justify-between items-center pt-1 font-bold">
-              <span className="text-emerald-700">Amount Paid via PayFast:</span>
-              <span className="text-emerald-700 text-sm">R{booking.amountPaid?.toFixed(2) || "0.00"}</span>
+              <span className="text-zinc-800">Amount Paid via PayFast:</span>
+              <span className="text-[#135061] text-sm">R{booking.amountPaid?.toFixed(2) || "0.00"}</span>
             </div>
             {booking.balanceDue > 0 && (
-              <div className="flex justify-between items-center text-[#007C89] font-bold">
+              <div className="flex justify-between items-center text-zinc-600 font-bold">
                 <span>Remaining Balance (on visit):</span>
                 <span>R{booking.balanceDue?.toFixed(2)}</span>
               </div>
@@ -192,7 +192,7 @@ export function SuccessModal({ isOpen, onClose, booking }: SuccessModalProps) {
               href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 transition-colors shadow-sm"
+              className="flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs font-bold text-white bg-[#135061] hover:bg-[#0d3b48] transition-colors shadow-sm"
             >
               <MessageCircle className="w-4 h-4" />
               Chat on WhatsApp

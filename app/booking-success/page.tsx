@@ -144,7 +144,7 @@ function BookingSuccessContent() {
             <div className="inline-flex items-center gap-2 mt-5 px-4 py-2 rounded-full bg-zinc-800/80 border border-zinc-700 text-xs">
               <span className="text-zinc-400">Reference:</span>
               <span className="font-extrabold text-[#00A3AD] text-sm tracking-wider">
-                {refCode || "KHH-CONFIRMED"}
+                {refCode || "TOT-CONFIRMED"}
               </span>
               <button
                 onClick={copyRefCode}
@@ -180,7 +180,7 @@ function BookingSuccessContent() {
                   <strong className="text-zinc-900">{booking.appointmentDate} at {booking.timeSlot}</strong>
                 </div>
                 <div className="flex justify-between py-1 border-b border-zinc-200/60">
-                  <span className="text-zinc-500">Patient:</span>
+                  <span className="text-zinc-500">Client:</span>
                   <strong className="text-zinc-900">{booking.patientName} ({booking.patientPhone})</strong>
                 </div>
                 <div className="flex justify-between py-1 border-b border-zinc-200/60">
