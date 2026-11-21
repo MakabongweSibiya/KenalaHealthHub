@@ -110,15 +110,16 @@ export async function POST(req: Request) {
     }
 
     const totalAmount = service.price;
+    const isProduct = service.itemType === "PRODUCT";
 
     let amountToPay = 0;
     let balanceDue = 0;
 
-    if (paymentChoice === "FULL_100") {
+    if (isProduct || paymentChoice === "FULL_100") {
       amountToPay = totalAmount;
       balanceDue = 0.0;
     } else {
-      amountToPay = FIXED_DEPOSIT_AMOUNT; // Fixed R200 booking deposit across all services
+      amountToPay = Math.min(FIXED_DEPOSIT_AMOUNT, totalAmount); // Fixed R200 booking deposit across services
       balanceDue = Math.max(0, Math.round((totalAmount - amountToPay) * 100) / 100);
     }
 

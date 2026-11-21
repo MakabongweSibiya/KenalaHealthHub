@@ -2,25 +2,18 @@
 
 import React from "react";
 import {
-  Syringe,
-  Users,
-  Baby,
-  Briefcase,
-  ShieldCheck,
-  Droplet,
-  Stethoscope,
-  Activity,
-  HeartPulse,
-  Heart,
   Clock,
   ArrowRight,
   Info,
+  ShoppingBag,
+  Heart,
 } from "lucide-react";
 
 export interface ServiceItem {
   id: string;
   name: string;
   slug: string;
+  itemType?: string; // "SERVICE" or "PRODUCT"
   category: string;
   shortDescription: string;
   fullDescription: string;
@@ -28,6 +21,7 @@ export interface ServiceItem {
   retainerPercentage: number;
   durationMinutes: number;
   icon: string;
+  imageUrl?: string | null;
   prepInstructions?: string | null;
   isActive: boolean;
 }
@@ -43,101 +37,106 @@ export function ServiceCard({
   onOpenDetails,
   onSelectForBooking,
 }: ServiceCardProps) {
-  const getIcon = (iconName: string) => {
-    switch (iconName) {
-      case "syringe":
-        return <Syringe className="w-6 h-6" />;
-      case "users":
-        return <Users className="w-6 h-6" />;
-      case "baby":
-        return <Baby className="w-6 h-6" />;
-      case "briefcase":
-        return <Briefcase className="w-6 h-6" />;
-      case "shield-check":
-        return <ShieldCheck className="w-6 h-6" />;
-      case "droplet":
-        return <Droplet className="w-6 h-6" />;
-      case "activity":
-        return <Activity className="w-6 h-6" />;
-      case "heart-pulse":
-        return <HeartPulse className="w-6 h-6" />;
-      case "heart":
-        return <Heart className="w-6 h-6" />;
-      default:
-        return <Stethoscope className="w-6 h-6" />;
-    }
-  };
-
+  const isProduct = service.itemType === "PRODUCT";
   const retainerAmount = 200;
 
   return (
-    <div className="group relative flex flex-col justify-between bg-white rounded-2xl p-6 border border-zinc-200 shadow-sm hover:shadow-xl hover:border-[#E86689] transition-all duration-300">
-      <div>
-        {/* Category & Duration */}
-        <div className="flex items-center justify-between gap-2 mb-4">
-          <span className="text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md bg-[#FDF2F5] text-[#D4426E] border border-[#F9D5E0]">
-            {service.category}
-          </span>
-          <span className="flex items-center gap-1 text-xs text-zinc-500 font-medium">
-            <Clock className="w-3.5 h-3.5 text-[#E86689]" />
-            {service.durationMinutes} mins
-          </span>
+    <div className="group relative flex flex-col justify-between bg-white rounded-2xl overflow-hidden border border-zinc-200 shadow-sm hover:shadow-xl hover:border-[#135061] transition-all duration-300">
+      {/* Optional Image Header (Products or Services) */}
+      {service.imageUrl && (
+        <div className="relative w-full h-48 bg-zinc-100 overflow-hidden border-b border-zinc-100">
+          <img
+            src={service.imageUrl}
+            alt={service.name}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          />
         </div>
+      )}
 
-        {/* Icon & Title */}
-        <div className="flex items-start gap-3.5 mb-3">
-          <div className="w-12 h-12 rounded-xl bg-[#F0F9FA] text-[#135061] border border-[#B2E2E6]/50 flex items-center justify-center flex-shrink-0 group-hover:bg-[#135061] group-hover:text-white transition-colors duration-300">
-            {getIcon(service.icon)}
+      <div className="p-6 flex-1 flex flex-col justify-between">
+        <div>
+          {/* Type/Category & Duration */}
+          <div className="flex items-center justify-between gap-2 mb-3.5">
+            <span
+              className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md border ${
+                isProduct
+                  ? "bg-zinc-100 text-zinc-800 border-zinc-200"
+                  : "bg-[#F0F9FA] text-[#135061] border-[#B2E2E6]"
+              }`}
+            >
+              {isProduct ? "Product" : service.category || "Treatment"}
+            </span>
+            {!isProduct && service.durationMinutes > 0 && (
+              <span className="flex items-center gap-1 text-xs text-zinc-500 font-medium">
+                <Clock className="w-3.5 h-3.5 text-[#135061]" />
+                {service.durationMinutes} mins
+              </span>
+            )}
           </div>
-          <div>
+
+          {/* Icon (if no image) & Title */}
+          <div className="flex items-start gap-3 mb-2.5">
+            {!service.imageUrl && (
+              <div className="w-10 h-10 rounded-xl bg-[#F0F9FA] text-[#135061] border border-[#B2E2E6]/60 flex items-center justify-center flex-shrink-0 group-hover:bg-[#135061] group-hover:text-white transition-colors duration-300">
+                {isProduct ? (
+                  <ShoppingBag className="w-5 h-5" />
+                ) : (
+                  <Heart className="w-5 h-5" />
+                )}
+              </div>
+            )}
             <h3 className="font-bold text-lg text-zinc-900 group-hover:text-[#135061] transition-colors leading-snug">
               {service.name}
             </h3>
           </div>
+
+          {/* Short Description */}
+          <p className="text-xs text-zinc-600 line-clamp-3 leading-relaxed mb-5">
+            {service.shortDescription}
+          </p>
         </div>
 
-        {/* Short Description */}
-        <p className="text-xs text-zinc-600 line-clamp-3 leading-relaxed mb-5">
-          {service.shortDescription}
-        </p>
-      </div>
+        {/* Pricing & CTA Actions */}
+        <div className="pt-4 border-t border-zinc-100">
+          <div className="flex items-baseline justify-between mb-4">
+            <div>
+              <span className="text-xs text-zinc-500 block">
+                {isProduct ? "Product Price" : "Full Treatment"}
+              </span>
+              <span className="text-xl font-extrabold text-zinc-900">
+                R{service.price.toFixed(0)}
+              </span>
+            </div>
 
-      {/* Pricing & CTA Actions */}
-      <div className="pt-4 border-t border-zinc-100">
-        <div className="flex items-baseline justify-between mb-4">
-          <div>
-            <span className="text-xs text-zinc-500 block">Full Treatment</span>
-            <span className="text-xl font-extrabold text-zinc-900">
-              R{service.price.toFixed(0)}
-            </span>
+            {!isProduct && (
+              <div className="text-right">
+                <span className="text-[10px] font-bold text-[#135061] uppercase tracking-wider block">
+                  Booking Deposit
+                </span>
+                <span className="text-sm font-extrabold text-[#135061]">
+                  R{retainerAmount}
+                </span>
+              </div>
+            )}
           </div>
 
-          <div className="text-right">
-            <span className="text-[10px] font-bold text-[#007C89] uppercase tracking-wider block">
-              Booking Deposit
-            </span>
-            <span className="text-sm font-extrabold text-[#007C89]">
-              R{retainerAmount}
-            </span>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              onClick={() => onOpenDetails(service)}
+              className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-semibold text-zinc-700 bg-zinc-100 hover:bg-zinc-200 transition-colors"
+            >
+              <Info className="w-3.5 h-3.5 text-zinc-500" />
+              Details
+            </button>
+
+            <button
+              onClick={() => onSelectForBooking(service)}
+              className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-bold text-white bg-[#135061] hover:bg-[#007C89] transition-colors shadow-sm"
+            >
+              {isProduct ? "Order Now" : "Book Slot"}
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
           </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-2">
-          <button
-            onClick={() => onOpenDetails(service)}
-            className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-semibold text-zinc-700 bg-zinc-100 hover:bg-zinc-200 transition-colors"
-          >
-            <Info className="w-3.5 h-3.5 text-zinc-500" />
-            Details
-          </button>
-
-          <button
-            onClick={() => onSelectForBooking(service)}
-            className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-bold text-white bg-[#007C89] hover:bg-[#005C66] transition-colors shadow-sm"
-          >
-            Book Slot
-            <ArrowRight className="w-3.5 h-3.5" />
-          </button>
         </div>
       </div>
     </div>

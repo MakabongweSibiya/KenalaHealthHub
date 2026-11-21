@@ -204,18 +204,18 @@ export async function sendBookingEmails(
             </td>
           </tr>
           <tr>
-            <td style="padding: 12px 0; border-bottom: 1px solid #f1f5f9; color: #64748b; font-weight: 400;">Total Treatment Fee</td>
-            <td style="padding: 12px 0; border-bottom: 1px solid #f1f5f9; color: #0f172a; text-align: right; font-weight: 600;">R${totalFee.toFixed(2)}</td>
+            <td style="padding: 12px 10px; border-bottom: 1px solid #f1f5f9; color: #64748b; font-weight: 400;">Total Treatment Fee</td>
+            <td style="padding: 12px 10px; border-bottom: 1px solid #f1f5f9; color: #0f172a; text-align: right; font-weight: 600;">R${totalFee.toFixed(2)}</td>
           </tr>
-          <tr>
-            <td style="padding: 12px 0; border-bottom: 1px solid #f1f5f9; color: #64748b; font-weight: 400;">Amount Paid (PayFast)</td>
-            <td style="padding: 12px 0; border-bottom: 1px solid #f1f5f9; color: #135061; text-align: right; font-weight: 700;">
-              R${data.amountPaid.toFixed(2)} <span style="color: #64748b; font-weight: 500; font-size: 13px;">(${paymentLabel})</span>
+          <tr style="background: #F0F9FA;">
+            <td style="padding: 13px 10px; border-bottom: 1px solid #e2e8f0; color: #135061; font-weight: 600;">Amount Paid (PayFast)</td>
+            <td style="padding: 13px 10px; border-bottom: 1px solid #e2e8f0; color: #135061; text-align: right; font-weight: 700; font-size: 15px;">
+              R${data.amountPaid.toFixed(2)} <span style="color: #475569; font-weight: 500; font-size: 12px;">(${paymentLabel})</span>
             </td>
           </tr>
-          <tr>
-            <td style="padding: 12px 0; border-bottom: 1px solid #f1f5f9; color: #64748b; font-weight: 400;">Remaining Balance at Visit</td>
-            <td style="padding: 12px 0; border-bottom: 1px solid #f1f5f9; color: #475569; text-align: right; font-weight: 600;">
+          <tr style="background: #F8FAFC;">
+            <td style="padding: 13px 10px; border-bottom: 1px solid #e2e8f0; color: #334155; font-weight: 600;">Remaining Balance at Visit</td>
+            <td style="padding: 13px 10px; border-bottom: 1px solid #e2e8f0; color: #0f172a; text-align: right; font-weight: 700; font-size: 15px;">
               R${data.balanceDue.toFixed(2)}
             </td>
           </tr>
@@ -267,7 +267,7 @@ export async function sendBookingEmails(
           New Paid Booking Received
         </h1>
         <p style="color: #64748b; margin: 5px 0 0 0; font-size: 12px; font-weight: 500;">
-          Booking Reference: <strong style="color: #0f172a;">${data.referenceCode}</strong> • PayFast Verified
+          Booking Reference: <strong style="color: #0f172a;">${data.referenceCode}</strong>
         </p>
       </div>
 
@@ -281,11 +281,17 @@ export async function sendBookingEmails(
             <td style="padding: 8px 0; font-weight: 600; color: #0f172a; text-align: right;">${data.patientName}</td>
           </tr>
           <tr>
-            <td style="padding: 8px 0; color: #64748b;">WhatsApp / Phone</td>
-            <td style="padding: 8px 0; font-weight: 600; text-align: right;">
-              <a href="tel:${data.patientPhone.replace(/\s+/g, "")}" style="color: #0f172a; text-decoration: none;">${data.patientPhone}</a>
-              &nbsp;•&nbsp;
-              <a href="https://wa.me/${cleanClientWhatsapp}" target="_blank" rel="noopener noreferrer" style="color: #135061; text-decoration: underline;">WhatsApp Client</a>
+            <td style="padding: 8px 0; color: #64748b; vertical-align: middle;">WhatsApp / Phone</td>
+            <td style="padding: 8px 0; font-weight: 600; text-align: right; vertical-align: middle;">
+              <a href="tel:${data.patientPhone.replace(/\s+/g, "")}" style="color: #0f172a; text-decoration: none; margin-right: 10px;">${data.patientPhone}</a>
+              <a
+                href="https://wa.me/${cleanClientWhatsapp}"
+                target="_blank"
+                rel="noopener noreferrer"
+                style="display: inline-block; background: #135061; color: #ffffff; font-size: 12px; font-weight: 600; padding: 6px 14px; border-radius: 99px; text-decoration: none;"
+              >
+                WhatsApp Client
+              </a>
             </td>
           </tr>
           <tr>
@@ -350,20 +356,20 @@ export async function sendBookingEmails(
         <h3 style="color: #135061; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 10px 0; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; font-weight: 700;">
           3. Financial Settlement Summary
         </h3>
-        <table style="width: 100%; border-collapse: collapse; background: #FAF9F6; border: 1px solid #e2e8f0; border-radius: 12px; margin-bottom: 24px; font-size: 14px;">
+        <table style="width: 100%; border-collapse: collapse; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; margin-bottom: 24px; font-size: 14px;">
           <tr>
-            <td style="padding: 12px 16px; color: #64748b; border-bottom: 1px solid #e2e8f0;">Total Treatment Fee</td>
-            <td style="padding: 12px 16px; font-weight: 600; color: #0f172a; text-align: right; border-bottom: 1px solid #e2e8f0;">R${totalFee.toFixed(2)}</td>
+            <td style="padding: 13px 16px; color: #64748b; border-bottom: 1px solid #e2e8f0;">Total Treatment Fee</td>
+            <td style="padding: 13px 16px; font-weight: 600; color: #0f172a; text-align: right; border-bottom: 1px solid #e2e8f0;">R${totalFee.toFixed(2)}</td>
           </tr>
-          <tr>
-            <td style="padding: 12px 16px; color: #64748b; border-bottom: 1px solid #e2e8f0;">Paid Now via PayFast</td>
-            <td style="padding: 12px 16px; font-weight: 700; color: #135061; text-align: right; border-bottom: 1px solid #e2e8f0;">
-              R${data.amountPaid.toFixed(2)} <span style="color: #64748b; font-weight: 500; font-size: 13px;">(${paymentLabel})</span>
+          <tr style="background: #F0F9FA;">
+            <td style="padding: 14px 16px; color: #135061; font-weight: 600; border-bottom: 1px solid #d5ecef;">Paid Now via PayFast</td>
+            <td style="padding: 14px 16px; font-weight: 700; color: #135061; font-size: 15px; text-align: right; border-bottom: 1px solid #d5ecef;">
+              R${data.amountPaid.toFixed(2)} <span style="color: #475569; font-weight: 500; font-size: 12px;">(${paymentLabel})</span>
             </td>
           </tr>
-          <tr>
-            <td style="padding: 12px 16px; color: #64748b;">Balance to Collect at Session</td>
-            <td style="padding: 12px 16px; font-weight: 600; color: #475569; text-align: right;">R${data.balanceDue.toFixed(2)}</td>
+          <tr style="background: #F1F5F9;">
+            <td style="padding: 14px 16px; color: #334155; font-weight: 600;">Balance to Collect at Session</td>
+            <td style="padding: 14px 16px; font-weight: 700; color: #0f172a; font-size: 15px; text-align: right;">R${data.balanceDue.toFixed(2)}</td>
           </tr>
         </table>
 

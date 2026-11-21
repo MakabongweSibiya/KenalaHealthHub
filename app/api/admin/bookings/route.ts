@@ -20,10 +20,10 @@ export async function GET(req: Request) {
 
     if (query) {
       where.OR = [
-        { referenceCode: { contains: query } },
-        { patientName: { contains: query } },
-        { patientPhone: { contains: query } },
-        { patientEmail: { contains: query } },
+        { referenceCode: { contains: query, mode: "insensitive" } },
+        { patientName: { contains: query, mode: "insensitive" } },
+        { patientPhone: { contains: query, mode: "insensitive" } },
+        { patientEmail: { contains: query, mode: "insensitive" } },
       ];
     }
 
@@ -47,7 +47,8 @@ export async function PATCH(req: Request) {
   }
 
   try {
-    const { id, status, appointmentDate, timeSlot, medicalNotes } = await req.json();
+    const { id, status, appointmentDate, timeSlot, medicalNotes, balancePaid } =
+      await req.json();
 
     if (!id) {
       return NextResponse.json({ error: "Booking ID is required" }, { status: 400 });
@@ -58,11 +59,15 @@ export async function PATCH(req: Request) {
     if (appointmentDate) updateData.appointmentDate = appointmentDate;
     if (timeSlot) updateData.timeSlot = timeSlot;
     if (medicalNotes !== undefined) updateData.medicalNotes = medicalNotes;
+    if (typeof balancePaid === "boolean") {
+      updateData.balancePaid = balancePaid;
+      updateData.balancePaidAt = balancePaid ? new Date() : null;
+    }
 
     const updated = await prisma.booking.update({
       where: { id },
       data: updateData,
-      include: { service: true },
+      include: { service: true, payments: true },
     });
 
     return NextResponse.json({ success: true, booking: updated });

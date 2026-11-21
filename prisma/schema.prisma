@@ -11,7 +11,7 @@ model Admin {
   id           String   @id @default(cuid())
   email        String   @unique
   passwordHash String
-  name         String   @default("Sr Grace")
+  name         String   @default("Totus Admin")
   role         String   @default("SUPER_ADMIN")
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -21,13 +21,15 @@ model Service {
   id                 String    @id @default(cuid())
   name               String
   slug               String    @unique
-  category           String    @default("General")
+  itemType           String    @default("SERVICE") // "SERVICE" or "PRODUCT"
+  category           String    @default("Massage & Aesthetics")
   shortDescription   String
   fullDescription    String
   price              Float
   retainerPercentage Float     @default(30.0)
-  durationMinutes    Int       @default(45)
-  icon               String    @default("stethoscope")
+  durationMinutes    Int       @default(60)
+  icon               String    @default("sparkles")
+  imageUrl           String?
   prepInstructions   String?
   isActive           Boolean   @default(true)
   displayOrder       Int       @default(0)
@@ -36,16 +38,43 @@ model Service {
   bookings           Booking[]
 }
 
+model Location {
+  id          String                 @id @default(cuid())
+  name        String
+  type        String                 @default("STUDIO") // "STUDIO" or "MOBILE"
+  address     String
+  isActive    Boolean                @default(true)
+  weeklyHours Json                   // { monday: { isOpen, openTime, closeTime }, ... }
+  createdAt   DateTime               @default(now())
+  updatedAt   DateTime               @updatedAt
+  overrides   LocationDateOverride[]
+}
+
+model LocationDateOverride {
+  id         String   @id @default(cuid())
+  locationId String
+  location   Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  date       String   // YYYY-MM-DD
+  isOpen     Boolean  @default(true)
+  openTime   String?  // e.g. "11:00"
+  closeTime  String?  // e.g. "16:00"
+  note       String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([locationId, date])
+}
+
 model Booking {
   id               String               @id @default(cuid())
   referenceCode    String               @unique
   serviceId        String
-  service          Service              @relation(fields: [serviceId], references: [id])
+  service          Service              @relation(fields: [serviceId], references: [id], onDelete: Cascade)
   patientName      String
   patientPhone     String
   patientEmail     String
   patientAddress   String
-  area             String               @default("Nellmapius")
+  area             String               @default("Pretoria East")
   appointmentDate  String
   timeSlot         String
   medicalNotes     String?
@@ -53,6 +82,8 @@ model Booking {
   totalAmount      Float
   amountPaid       Float                @default(0.0)
   balanceDue       Float
+  balancePaid      Boolean              @default(false)
+  balancePaidAt    DateTime?
   status           String               @default("PENDING_PAYMENT") // PENDING_PAYMENT, CONFIRMED, COMPLETED, CANCELLED
   payfastPaymentId String?
   createdAt        DateTime             @default(now())
@@ -76,13 +107,13 @@ model PaymentTransaction {
 
 model ClinicSetting {
   id                     String   @id @default("default")
-  clinicName             String   @default("Kenala Health Hub")
-  practitionerName       String   @default("Sr Grace")
+  clinicName             String   @default("Totus Massage & Aesthetics")
+  practitionerName       String   @default("Totus Admin")
   phone                  String   @default("079 011 8464")
   whatsappNumber         String   @default("079 011 8464")
-  address                String   @default("Corner Love drive & Alwyn str, ext 4, Nellmapius")
+  address                String   @default("Pretoria East")
   operatingHours         String   @default("Mon-Sat: 08:00 - 17:00, Sun: By appointment")
   defaultRetainerPercent Float    @default(30.0)
-  adminAlertEmail        String   @default("info@kenalahealthhub.co.za")
+  adminAlertEmail        String   @default("totusmassages@gmail.com")
   updatedAt              DateTime @updatedAt
 }

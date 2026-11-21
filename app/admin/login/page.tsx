@@ -4,13 +4,14 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { BrandLogo } from "@/components/BrandLogo";
+import { ConfirmationModal } from "@/components/ConfirmationModal";
 import {
-  ShieldCheck,
   Mail,
   Lock,
   AlertCircle,
   Loader2,
   ArrowRight,
+  ArrowLeft,
   Eye,
   EyeOff,
 } from "lucide-react";
@@ -25,8 +26,9 @@ export default function AdminLoginPage() {
   const [isLockedOut, setIsLockedOut] = useState(false);
   const [isShaking, setIsShaking] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-  // If already authenticated with a valid JWT session, redirect directly to dashboard
+  // If already authenticated with a valid session, redirect to dashboard
   useEffect(() => {
     async function checkExistingSession() {
       try {
@@ -68,8 +70,8 @@ export default function AdminLoginPage() {
         return;
       }
 
-      // Successful login -> Redirect to admin dashboard
-      router.push("/admin/dashboard");
+      setIsLoading(false);
+      setShowSuccessModal(true);
     } catch {
       setIsShaking(true);
       setErrorMsg("Network error. Please verify your internet connection and try again.");
@@ -81,50 +83,44 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#111111] text-white flex flex-col justify-between p-4 sm:p-6 relative overflow-hidden">
-      {/* Subtle Ambient Teal & Lotus Pink Glows */}
-      <div className="absolute top-0 right-0 -mr-32 -mt-32 w-96 h-96 rounded-full bg-[#E86689]/10 blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-0 -ml-32 -mb-32 w-96 h-96 rounded-full bg-[#007C89]/10 blur-3xl pointer-events-none" />
+    <div className="min-h-screen bg-[#FAF9F6] text-zinc-900 flex flex-col justify-between relative overflow-hidden">
+      {/* Subtle Ambient Light */}
+      <div className="absolute top-0 right-0 -mr-28 -mt-28 w-96 h-96 rounded-full bg-[#E86689]/10 blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-0 -ml-28 -mb-28 w-96 h-96 rounded-full bg-[#007C89]/10 blur-3xl pointer-events-none" />
 
-      {/* Top Bar */}
-      <div className="max-w-6xl mx-auto w-full flex items-center justify-between py-4 relative z-10">
-        <Link href="/">
-          <BrandLogo size="sm" isDark />
-        </Link>
-        <Link
-          href="/"
-          className="text-xs font-semibold text-zinc-400 hover:text-white transition-colors"
-        >
-          ← Return to Client Website
-        </Link>
-      </div>
+      {/* Floating Glassmorphic Dynamic Island Admin Login Navbar */}
+      <header className="fixed top-3 sm:top-4 left-0 right-0 z-40 px-3 sm:px-6 pointer-events-none">
+        <nav className="pointer-events-auto max-w-7xl mx-auto rounded-full bg-white/80 backdrop-blur-2xl border border-white/80 shadow-[0_12px_38px_-10px_rgba(19,80,97,0.14)] ring-1 ring-zinc-900/[0.06] px-5 sm:px-8 py-3 sm:py-3.5 flex items-center justify-between">
+          <Link href="/" className="focus:outline-none">
+            <BrandLogo size="md" />
+          </Link>
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold text-zinc-800 bg-zinc-100/90 hover:bg-zinc-200/80 transition-all"
+          >
+            <ArrowLeft className="w-4 h-4 text-[#135061]" />
+            <span>Return to Website</span>
+          </Link>
+        </nav>
+      </header>
 
-      {/* Main Login Card */}
-      <div className="max-w-md mx-auto w-full my-auto relative z-10">
-        <div className="bg-zinc-900/95 border border-zinc-800 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
-          {/* Top Teal & Lotus Pink Gradient Bar */}
-          <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-[#135061] via-[#007C89] to-[#E86689]" />
+      {/* Main Centered White Login Card */}
+      <main className="flex-1 flex items-center justify-center px-4 pt-28 pb-12 relative z-10">
+        <div className="max-w-md w-full bg-white border border-zinc-200/80 rounded-3xl p-8 sm:p-9 shadow-xl relative overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-1.5 bg-[#135061]" />
 
-          {/* Security Badge */}
-          <div className="w-12 h-12 rounded-2xl bg-[#E86689]/15 border border-[#E86689]/30 text-[#F6A5BA] flex items-center justify-center mb-6">
-            <ShieldCheck className="w-6 h-6" />
-          </div>
-
-          <h1 className="text-2xl font-black text-white tracking-tight">
+          <h1 className="text-2xl font-extrabold text-zinc-900 tracking-tight mb-6">
             Totus Admin Portal
           </h1>
-          <p className="text-xs text-zinc-400 mt-1 mb-6">
-            Encrypted JWT &amp; Rate-Limited Owner Authentication
-          </p>
 
           <form onSubmit={handleSubmit} className="space-y-4" autoComplete="on">
             {/* Email Field */}
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-zinc-400 mb-1.5">
+              <label className="block text-xs font-bold uppercase tracking-wider text-zinc-600 mb-1.5">
                 Administrator Email
               </label>
               <div className="relative">
-                <Mail className="absolute left-3.5 top-3.5 w-4 h-4 text-zinc-500" />
+                <Mail className="absolute left-3.5 top-3.5 w-4 h-4 text-zinc-400" />
                 <input
                   type="email"
                   name="email"
@@ -136,20 +132,18 @@ export default function AdminLoginPage() {
                     if (errorMsg) setErrorMsg(null);
                   }}
                   placeholder="Enter admin email address"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-zinc-700 bg-zinc-800/90 text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#E86689] transition-all"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-zinc-300 bg-zinc-50 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#135061] transition-all"
                 />
               </div>
             </div>
 
             {/* Password Field */}
             <div className={`${isShaking ? "animate-shake" : ""}`}>
-              <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-xs font-bold uppercase tracking-wider text-zinc-400">
-                  Password
-                </label>
-              </div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-zinc-600 mb-1.5">
+                Password
+              </label>
               <div className="relative">
-                <Lock className="absolute left-3.5 top-3.5 w-4 h-4 text-zinc-500" />
+                <Lock className="absolute left-3.5 top-3.5 w-4 h-4 text-zinc-400" />
                 <input
                   type={showPassword ? "text" : "password"}
                   name="password"
@@ -161,16 +155,16 @@ export default function AdminLoginPage() {
                     if (errorMsg) setErrorMsg(null);
                   }}
                   placeholder="••••••••••••"
-                  className={`w-full pl-10 pr-11 py-3 rounded-xl border text-sm text-white placeholder-zinc-500 focus:outline-none transition-all ${
+                  className={`w-full pl-10 pr-11 py-3 rounded-xl border text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none transition-all ${
                     errorMsg
-                      ? "border-red-500 bg-red-950/40 text-red-200 focus:ring-2 focus:ring-red-500"
-                      : "border-zinc-700 bg-zinc-800/90 focus:ring-2 focus:ring-[#E86689]"
+                      ? "border-red-500 bg-red-50 text-red-900 focus:ring-2 focus:ring-red-500"
+                      : "border-zinc-300 bg-zinc-50 focus:ring-2 focus:ring-[#135061]"
                   }`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-3 text-zinc-400 hover:text-white transition-colors p-0.5"
+                  className="absolute right-3 top-3 text-zinc-400 hover:text-zinc-800 transition-colors p-0.5"
                   aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? (
@@ -181,13 +175,12 @@ export default function AdminLoginPage() {
                 </button>
               </div>
 
-              {/* Error / Rate-Limit Lockout Banner */}
               {errorMsg && (
                 <div
                   className={`flex items-start gap-2 text-xs font-bold mt-2.5 p-3 rounded-xl border animate-in fade-in duration-200 ${
                     isLockedOut
-                      ? "text-amber-300 bg-amber-950/70 border-amber-700/80"
-                      : "text-red-400 bg-red-950/60 border-red-800/80"
+                      ? "text-amber-800 bg-amber-50 border-amber-200"
+                      : "text-red-700 bg-red-50 border-red-200"
                   }`}
                 >
                   <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
@@ -200,12 +193,12 @@ export default function AdminLoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full mt-2 inline-flex items-center justify-center gap-2 py-3.5 px-6 rounded-xl font-bold text-sm text-white bg-gradient-to-r from-[#135061] to-[#007C89] hover:from-[#0E3D4B] hover:to-[#005C66] ring-2 ring-[#E86689]/30 shadow-lg transition-all active:scale-95 disabled:opacity-50"
+              className="w-full mt-3 inline-flex items-center justify-center gap-2 py-3.5 px-6 rounded-full font-bold text-sm text-white bg-[#135061] hover:bg-[#007C89] shadow-md hover:shadow-lg transition-all active:scale-95 disabled:opacity-50"
             >
               {isLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Verifying Credentials...</span>
+                  <span>Signing In...</span>
                 </>
               ) : (
                 <>
@@ -215,18 +208,25 @@ export default function AdminLoginPage() {
               )}
             </button>
           </form>
-
-          {/* Security Footer Notice */}
-          <div className="mt-6 pt-5 border-t border-zinc-800/80 text-[11px] text-zinc-500 text-center">
-            Protected with HS256 JWT, Bcrypt Cost-12 &amp; Brute-Force Lockout Protection.
-          </div>
         </div>
-      </div>
+      </main>
 
-      {/* Mini Footer */}
-      <div className="text-center text-xs text-zinc-500 py-4 relative z-10">
+      {/* Footer */}
+      <footer className="text-center text-xs text-zinc-500 py-5 relative z-10">
         Totus Massage &amp; Aesthetics • Authorised Management Only
-      </div>
+      </footer>
+
+      {/* Confirmation Modal on Successful Sign-In */}
+      <ConfirmationModal
+        isOpen={showSuccessModal}
+        title="Signed In Successfully"
+        message="Welcome back to the Totus Admin Portal. Loading your workspace..."
+        durationMs={1600}
+        onClose={() => {
+          setShowSuccessModal(false);
+          router.push("/admin/dashboard");
+        }}
+      />
     </div>
   );
 }

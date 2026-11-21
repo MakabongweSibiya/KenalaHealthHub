@@ -9,26 +9,48 @@ export async function GET() {
   }
 
   try {
-    const totalBookings = await prisma.booking.count();
-    const confirmedBookings = await prisma.booking.count({ where: { status: "CONFIRMED" } });
-    const pendingBookings = await prisma.booking.count({ where: { status: "PENDING_PAYMENT" } });
-    const completedBookings = await prisma.booking.count({ where: { status: "COMPLETED" } });
+    const [
+      totalBookings,
+      confirmedBookings,
+      pendingBookings,
+      completedBookings,
+      activeBookings,
+      recentBookings,
+    ] = await Promise.all([
+      prisma.booking.count(),
+      prisma.booking.count({ where: { status: "CONFIRMED" } }),
+      prisma.booking.count({ where: { status: "PENDING_PAYMENT" } }),
+      prisma.booking.count({ where: { status: "COMPLETED" } }),
+      prisma.booking.findMany({
+        where: { status: { in: ["CONFIRMED", "COMPLETED"] } },
+        select: {
+          totalAmount: true,
+          amountPaid: true,
+          balanceDue: true,
+          balancePaid: true,
+        },
+      }),
+      prisma.booking.findMany({
+        take: 6,
+        orderBy: { createdAt: "desc" },
+        include: { service: true },
+      }),
+    ]);
 
-    const paidSums = await prisma.booking.aggregate({
-      _sum: {
-        amountPaid: true,
-        balanceDue: true,
-      },
-      where: {
-        status: { in: ["CONFIRMED", "COMPLETED"] },
-      },
-    });
+    let totalRetainersCollected = 0;
+    let totalBalancesCollected = 0;
+    let totalPendingBalance = 0;
 
-    const recentBookings = await prisma.booking.findMany({
-      take: 6,
-      orderBy: { createdAt: "desc" },
-      include: { service: true },
-    });
+    for (const b of activeBookings) {
+      totalRetainersCollected += b.amountPaid || 0;
+      if (b.balanceDue > 0) {
+        if (b.balancePaid) {
+          totalBalancesCollected += b.balanceDue;
+        } else {
+          totalPendingBalance += b.balanceDue;
+        }
+      }
+    }
 
     return NextResponse.json({
       metrics: {
@@ -36,8 +58,10 @@ export async function GET() {
         confirmedBookings,
         pendingBookings,
         completedBookings,
-        totalRevenueCollected: paidSums._sum.amountPaid || 0,
-        totalPendingBalance: paidSums._sum.balanceDue || 0,
+        totalRevenueCollected: totalRetainersCollected + totalBalancesCollected,
+        totalRetainersCollected,
+        totalBalancesCollected,
+        totalPendingBalance,
       },
       recentBookings,
     });

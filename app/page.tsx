@@ -11,7 +11,6 @@ import { Footer } from "@/components/Footer";
 import {
   Phone,
   MessageCircle,
-  Calendar,
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
@@ -19,7 +18,7 @@ import {
 export default function HomePage() {
   const [services, setServices] = useState<ServiceItem[]>([]);
   const [loadingServices, setLoadingServices] = useState<boolean>(true);
-  const [selectedCategory, setSelectedCategory] = useState<string>("All");
+  const [selectedFilter, setSelectedFilter] = useState<string>("All");
   const [isServicesExpanded, setIsServicesExpanded] = useState<boolean>(false);
 
   // Modals state
@@ -32,12 +31,12 @@ export default function HomePage() {
   const [confirmedBooking, setConfirmedBooking] = useState<any | null>(null);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 
-  // Fetch services on load
+  // Fetch services & products on load
   useEffect(() => {
     async function loadServices() {
       try {
         setLoadingServices(true);
-        const res = await fetch("/api/admin/services");
+        const res = await fetch("/api/admin/services", { cache: "no-store" });
         const data = await res.json();
         if (data.services) {
           setServices(data.services.filter((s: ServiceItem) => s.isActive !== false));
@@ -51,16 +50,22 @@ export default function HomePage() {
     loadServices();
   }, []);
 
-  // Filter services by category
-  const categories = ["All", ...Array.from(new Set(services.map((s) => s.category)))];
-  const filteredServices =
-    selectedCategory === "All"
-      ? services
-      : services.filter((s) => s.category === selectedCategory);
+  const hasProducts = services.some((s) => s.itemType === "PRODUCT");
+  const hasTreatments = services.some((s) => s.itemType !== "PRODUCT");
 
-  // When 'All' is active, show only top 6 unless expanded
+  const filterTabs = ["All"];
+  if (hasTreatments) filterTabs.push("Services");
+  if (hasProducts) filterTabs.push("Products");
+
+  const filteredServices =
+    selectedFilter === "All"
+      ? services
+      : selectedFilter === "Products"
+      ? services.filter((s) => s.itemType === "PRODUCT")
+      : services.filter((s) => s.itemType !== "PRODUCT");
+
   const displayedServices =
-    selectedCategory === "All" && !isServicesExpanded
+    selectedFilter === "All" && !isServicesExpanded
       ? filteredServices.slice(0, 6)
       : filteredServices;
 
@@ -98,19 +103,21 @@ export default function HomePage() {
           }}
         />
 
-        {/* Services Catalog Section */}
+        {/* Services & Products Catalog Section */}
         <section
           id="services-section"
           aria-labelledby="services-heading"
           className="py-16 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full"
         >
-          {/* Section Title (Clean, No Tacky Tag Above) */}
-          <div className="text-center max-w-2xl mx-auto mb-12">
+          {/* Section Title */}
+          <div className="text-center max-w-2xl mx-auto mb-10">
             <h2
               id="services-heading"
               className="text-3xl sm:text-4xl font-extrabold text-zinc-900 tracking-tight"
             >
-              Curated Massage &amp; Aesthetics Treatments
+              {hasProducts
+                ? "Curated Treatments & Wellness Products"
+                : "Curated Massage & Aesthetics Treatments"}
             </h2>
             <p className="text-sm text-zinc-600 mt-3 leading-relaxed">
               Reserve your massage or aesthetic session seamlessly online. Every appointment
@@ -119,23 +126,23 @@ export default function HomePage() {
             </p>
           </div>
 
-          {/* Category Filters (Only show when services exist) */}
-          {services.length > 0 && (
+          {/* Filter Pills (Show when both Services and Products exist) */}
+          {filterTabs.length > 2 && (
             <div className="flex flex-wrap items-center justify-center gap-2 mb-10">
-              {categories.map((cat) => (
+              {filterTabs.map((tab) => (
                 <button
-                  key={cat}
+                  key={tab}
                   onClick={() => {
-                    setSelectedCategory(cat);
+                    setSelectedFilter(tab);
                     setIsServicesExpanded(false);
                   }}
-                  className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${
-                    selectedCategory === cat
+                  className={`px-5 py-2 rounded-full text-xs font-bold transition-all ${
+                    selectedFilter === tab
                       ? "bg-[#135061] text-white shadow-md"
                       : "bg-white text-zinc-600 border border-zinc-200 hover:border-[#135061] hover:text-[#135061]"
                   }`}
                 >
-                  {cat}
+                  {tab}
                 </button>
               ))}
             </div>
@@ -144,7 +151,7 @@ export default function HomePage() {
           {/* Services Grid or Clean Empty State */}
           {loadingServices ? (
             <div className="py-16 text-center text-sm text-zinc-500 font-medium">
-              Loading treatment menu...
+              Loading menu...
             </div>
           ) : services.length === 0 ? (
             <div className="max-w-xl mx-auto bg-white rounded-3xl p-8 sm:p-10 border border-zinc-200/80 shadow-sm text-center">
@@ -159,8 +166,8 @@ export default function HomePage() {
                 Treatment Menu Being Curated
               </h3>
               <p className="text-xs sm:text-sm text-zinc-600 mt-2 leading-relaxed">
-                Our signature massage and aesthetics treatments are currently being updated by our
-                therapist. Please check back shortly or contact our massage therapist directly on
+                Our signature massage, aesthetics treatments, and wellness products are currently
+                being updated by our therapist. Please check back shortly or message us directly on
                 WhatsApp for bespoke bookings.
               </p>
               <div className="flex flex-wrap items-center justify-center gap-3 mt-6">
@@ -195,8 +202,8 @@ export default function HomePage() {
                 ))}
               </div>
 
-              {/* Expand / Collapse Button (Top 6 toggle on 'All') */}
-              {selectedCategory === "All" && filteredServices.length > 6 && (
+              {/* Expand / Collapse Button */}
+              {selectedFilter === "All" && filteredServices.length > 6 && (
                 <div className="mt-10 flex justify-center">
                   <button
                     onClick={() => setIsServicesExpanded(!isServicesExpanded)}
@@ -208,9 +215,9 @@ export default function HomePage() {
                         : `See All (${filteredServices.length})`}
                     </span>
                     {isServicesExpanded ? (
-                      <ChevronUp className="w-4 h-4 text-[#135061] transition-transform group-hover:-translate-y-0.5" />
+                      <ChevronUp className="w-4 h-4 text-[#135061]" />
                     ) : (
-                      <ChevronDown className="w-4 h-4 text-[#135061] transition-transform group-hover:translate-y-0.5" />
+                      <ChevronDown className="w-4 h-4 text-[#135061]" />
                     )}
                   </button>
                 </div>
@@ -218,56 +225,9 @@ export default function HomePage() {
             </>
           )}
         </section>
-
-        {/* Feature Sanctuary Banner / Why Totus Massage & Aesthetics */}
-        <section className="py-16 bg-white border-y border-zinc-200">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="bg-[#111111] rounded-3xl p-8 sm:p-12 text-white relative overflow-hidden border border-zinc-800">
-              {/* Ambient Teal & Subtle Lotus Glow */}
-              <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 rounded-full bg-[#E86689]/15 blur-3xl pointer-events-none" />
-              <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 rounded-full bg-[#00A3AD]/15 blur-3xl pointer-events-none" />
-
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
-                <div className="lg:col-span-8">
-                  <span className="text-xs font-extrabold tracking-widest text-[#00A3AD] uppercase">
-                    TOTUS • MASSAGE &amp; AESTHETICS
-                  </span>
-                  <h3 className="text-2xl sm:text-3xl font-extrabold mt-2 text-white">
-                    Where Deep Relaxation Meets Radiant Aesthetics
-                  </h3>
-                  <p className="text-xs sm:text-sm text-zinc-300 mt-3 max-w-2xl leading-relaxed">
-                    Every session at Totus is tailored around your body, skin goals, and personal
-                    comfort. Whether you visit our tranquil studio or book a private mobile session,
-                    experience unhurried luxury and restorative care.
-                  </p>
-                </div>
-
-                <div className="lg:col-span-4 flex flex-col gap-3 justify-center items-start lg:items-end">
-                  <button
-                    onClick={() => handleOpenBookingModal()}
-                    className="w-full sm:w-56 inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full font-bold text-sm text-white bg-[#135061] hover:bg-[#007C89] shadow-lg transition-all active:scale-95"
-                  >
-                    <Calendar className="w-4 h-4 text-white" />
-                    <span>Reserve Your Session</span>
-                  </button>
-
-                  <a
-                    href="https://wa.me/27790118464"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full sm:w-56 inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full font-semibold text-xs text-white bg-zinc-800 hover:bg-zinc-700 transition-colors border border-zinc-700"
-                  >
-                    <MessageCircle className="w-4 h-4 text-[#00A3AD]" />
-                    <span>WhatsApp Therapist</span>
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
       </main>
 
-      {/* Footer */}
+      {/* Clean White Compact Footer */}
       <Footer />
 
       {/* Modals */}
