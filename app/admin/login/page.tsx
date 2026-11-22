@@ -1,5 +1,15 @@
 "use client";
 
+/**
+ * Totus Massage & Aesthetics — Hardened Glassmorphic Admin Sign-In Portal
+ *
+ * Matches the flagship KREDO storefront design system:
+ * - Floating glassmorphic Dynamic Island navbar with metallic silver rim glow & breathing wordmark
+ * - Glassmorphic Sign-In card (no harsh top color bar) with subtle hover elevation & breathing title
+ * - Glassmorphic bevel-up `Sign In to Admin Portal` and `Return to Website` buttons
+ * - Backed by 3-attempt Neon-persistent brute-force lockout & constant-time bcrypt verification
+ */
+
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -28,11 +38,11 @@ export default function AdminLoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-  // If already authenticated with a valid session, redirect to dashboard
+  // Redirect automatically if already authenticated with a valid HttpOnly session
   useEffect(() => {
     async function checkExistingSession() {
       try {
-        const res = await fetch("/api/auth/me");
+        const res = await fetch("/api/auth/me", { cache: "no-store" });
         if (res.ok) {
           router.replace("/admin/dashboard");
         }
@@ -84,32 +94,34 @@ export default function AdminLoginPage() {
 
   return (
     <div className="min-h-screen bg-[#FAF9F6] text-zinc-900 flex flex-col justify-between relative overflow-hidden">
-      {/* Subtle Ambient Light */}
-      <div className="absolute top-0 right-0 -mr-28 -mt-28 w-96 h-96 rounded-full bg-[#E86689]/10 blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-0 -ml-28 -mb-28 w-96 h-96 rounded-full bg-[#007C89]/10 blur-3xl pointer-events-none" />
+      {/* Ultra-soft ambient corner glow */}
+      <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-[#E86689]/[0.06] blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-24 -left-24 w-96 h-96 rounded-full bg-[#007C89]/[0.06] blur-3xl pointer-events-none" />
 
-      {/* Floating Glassmorphic Dynamic Island Admin Login Navbar */}
+      {/* Floating Glassmorphic Dynamic Island Navbar (Identical to Client Storefront) */}
       <header className="fixed top-3 sm:top-4 left-0 right-0 z-40 px-3 sm:px-6 pointer-events-none">
-        <nav className="pointer-events-auto max-w-7xl mx-auto rounded-full bg-white/80 backdrop-blur-2xl border border-white/80 shadow-[0_12px_38px_-10px_rgba(19,80,97,0.14)] ring-1 ring-zinc-900/[0.06] px-5 sm:px-8 py-3 sm:py-3.5 flex items-center justify-between">
-          <Link href="/" className="focus:outline-none">
-            <BrandLogo size="md" />
+        <nav
+          aria-label="Admin Portal Navigation"
+          className="pointer-events-auto max-w-7xl mx-auto rounded-full glass-island-nav px-3.5 sm:px-8 py-2.5 sm:py-3.5 flex items-center justify-between gap-2 sm:gap-4"
+        >
+          <Link href="/" className="flex items-center min-w-0 focus:outline-none">
+            <BrandLogo size="md" breathingGlow />
           </Link>
           <Link
             href="/"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold text-zinc-800 bg-zinc-100/90 hover:bg-zinc-200/80 transition-all"
+            className="glass-btn-light flex-shrink-0 inline-flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-full text-[11px] sm:text-sm font-bold text-zinc-900 whitespace-nowrap"
           >
-            <ArrowLeft className="w-4 h-4 text-[#135061]" />
-            <span>Return to Website</span>
+            <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#135061]" />
+            <span className="hidden xs:inline sm:inline">Return to Website</span>
+            <span className="sm:hidden">Website</span>
           </Link>
         </nav>
       </header>
 
-      {/* Main Centered White Login Card */}
+      {/* Main Centered Glassmorphic Login Card (No harsh top teal stripe) */}
       <main className="flex-1 flex items-center justify-center px-4 pt-28 pb-12 relative z-10">
-        <div className="max-w-md w-full bg-white border border-zinc-200/80 rounded-3xl p-8 sm:p-9 shadow-xl relative overflow-hidden">
-          <div className="absolute top-0 left-0 right-0 h-1.5 bg-[#135061]" />
-
-          <h1 className="text-2xl font-extrabold text-zinc-900 tracking-tight mb-6">
+        <div className="max-w-md w-full glass-modal-card glass-card-hover rounded-3xl p-7 sm:p-9 relative overflow-hidden">
+          <h1 className="text-2xl font-extrabold text-zinc-900 tracking-tight mb-6 breathing-glow-text">
             Totus Admin Portal
           </h1>
 
@@ -132,7 +144,7 @@ export default function AdminLoginPage() {
                     if (errorMsg) setErrorMsg(null);
                   }}
                   placeholder="Enter admin email address"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-zinc-300 bg-zinc-50 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#135061] transition-all"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-zinc-300/80 bg-white/80 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#135061] transition-all"
                 />
               </div>
             </div>
@@ -157,8 +169,8 @@ export default function AdminLoginPage() {
                   placeholder="••••••••••••"
                   className={`w-full pl-10 pr-11 py-3 rounded-xl border text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none transition-all ${
                     errorMsg
-                      ? "border-red-500 bg-red-50 text-red-900 focus:ring-2 focus:ring-red-500"
-                      : "border-zinc-300 bg-zinc-50 focus:ring-2 focus:ring-[#135061]"
+                      ? "border-red-500 bg-red-50/90 text-red-900 focus:ring-2 focus:ring-red-500"
+                      : "border-zinc-300/80 bg-white/80 focus:ring-2 focus:ring-[#135061]"
                   }`}
                 />
                 <button
@@ -179,8 +191,8 @@ export default function AdminLoginPage() {
                 <div
                   className={`flex items-start gap-2 text-xs font-bold mt-2.5 p-3 rounded-xl border animate-in fade-in duration-200 ${
                     isLockedOut
-                      ? "text-amber-800 bg-amber-50 border-amber-200"
-                      : "text-red-700 bg-red-50 border-red-200"
+                      ? "text-amber-800 bg-amber-50/90 border-amber-200"
+                      : "text-red-700 bg-red-50/90 border-red-200"
                   }`}
                 >
                   <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
@@ -189,11 +201,11 @@ export default function AdminLoginPage() {
               )}
             </div>
 
-            {/* Submit CTA */}
+            {/* Glassmorphic Bevel-Up Submit CTA */}
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full mt-3 inline-flex items-center justify-center gap-2 py-3.5 px-6 rounded-full font-bold text-sm text-white bg-[#135061] hover:bg-[#007C89] shadow-md hover:shadow-lg transition-all active:scale-95 disabled:opacity-50"
+              className="glass-btn-teal w-full mt-3 inline-flex items-center justify-center gap-2 py-3.5 px-6 rounded-full font-bold text-sm text-white group cursor-pointer"
             >
               {isLoading ? (
                 <>
@@ -203,7 +215,7 @@ export default function AdminLoginPage() {
               ) : (
                 <>
                   <span>Sign In to Admin Portal</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowRight className="w-4 h-4 transition-transform duration-300 ease-out group-hover:translate-x-1" />
                 </>
               )}
             </button>
@@ -211,12 +223,12 @@ export default function AdminLoginPage() {
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="text-center text-xs text-zinc-500 py-5 relative z-10">
+      {/* Seamless #FAF9F6 Footer */}
+      <footer className="text-center text-xs text-zinc-500 py-5 bg-[#FAF9F6] relative z-10">
         Totus Massage &amp; Aesthetics • Authorised Management Only
       </footer>
 
-      {/* Confirmation Modal on Successful Sign-In */}
+      {/* Glassmorphic Confirmation Modal on Successful Sign-In */}
       <ConfirmationModal
         isOpen={showSuccessModal}
         title="Signed In Successfully"

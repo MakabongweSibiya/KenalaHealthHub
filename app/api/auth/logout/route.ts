@@ -1,8 +1,19 @@
 import { NextResponse } from "next/server";
-import { ADMIN_COOKIE_NAME } from "@/lib/auth";
+import { ADMIN_COOKIE_NAME, getAuthenticatedAdmin } from "@/lib/auth";
 import { NO_STORE_HEADERS } from "@/lib/security";
+import { logAuditEvent } from "@/lib/audit";
 
-export async function POST() {
+export async function POST(req: Request) {
+  const admin = await getAuthenticatedAdmin();
+  if (admin) {
+    await logAuditEvent({
+      eventType: "ADMIN_LOGOUT",
+      actor: admin.email,
+      req,
+      resourceId: admin.id,
+      status: "OK",
+    });
+  }
   const response = NextResponse.json(
     { success: true, message: "Logged out" },
     { headers: NO_STORE_HEADERS }

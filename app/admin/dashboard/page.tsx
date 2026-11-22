@@ -527,18 +527,19 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="min-h-screen bg-[#FAF9F6] text-zinc-900 flex flex-col">
-      {/* Floating Glassmorphic Dynamic Island Admin Navbar (Same Aesthetic as Main Site) */}
+      {/* Floating Glassmorphic Dynamic Island Admin Navbar (Consistent Flagship Theme) */}
       <header className="fixed top-3 sm:top-4 left-0 right-0 z-40 px-3 sm:px-6 pointer-events-none">
-        <nav className="pointer-events-auto max-w-7xl mx-auto rounded-full bg-white/82 backdrop-blur-2xl border border-white/80 shadow-[0_12px_38px_-10px_rgba(19,80,97,0.16)] ring-1 ring-zinc-900/[0.06] px-4 sm:px-7 py-2.5 sm:py-3">
-          <div className="flex items-center justify-between gap-3">
-            {/* Logo */}
-            <Link href="/" className="flex items-center flex-shrink-0 focus:outline-none">
-              <BrandLogo size="sm" />
+        <nav className="pointer-events-auto max-w-7xl mx-auto rounded-full glass-island-nav px-3.5 sm:px-7 py-2.5 sm:py-3">
+          <div className="flex items-center justify-between gap-2 sm:gap-3 min-w-0">
+            {/* Logo with synchronized meditative breathing glow */}
+            <Link href="/" className="flex items-center min-w-0 flex-shrink focus:outline-none">
+              <BrandLogo size="sm" breathingGlow />
             </Link>
 
             {/* Desktop Dashboard Page Tabs inside the Dynamic Island */}
-            <div className="hidden lg:flex items-center gap-1.5 bg-zinc-100/80 p-1 rounded-full border border-zinc-200/60">
+            <div className="hidden lg:flex items-center gap-1.5 bg-zinc-100/75 p-1 rounded-full border border-white/80">
               <button
+                type="button"
                 onClick={() => setActiveTab("services")}
                 className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${
                   activeTab === "services"
@@ -549,6 +550,7 @@ export default function AdminDashboardPage() {
                 Services &amp; Products ({services.length})
               </button>
               <button
+                type="button"
                 onClick={() => setActiveTab("bookings")}
                 className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${
                   activeTab === "bookings"
@@ -559,6 +561,7 @@ export default function AdminDashboardPage() {
                 Bookings &amp; Appointments ({bookings.length})
               </button>
               <button
+                type="button"
                 onClick={() => setActiveTab("locations")}
                 className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${
                   activeTab === "locations"
@@ -570,19 +573,20 @@ export default function AdminDashboardPage() {
               </button>
             </div>
 
-            {/* Right Controls */}
-            <div className="flex items-center gap-2 sm:gap-3">
+            {/* Right Controls with Glassmorphic Bevel-Up Hover + Metallic Rim Glow */}
+            <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
               <Link
                 href="/"
-                className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold text-zinc-700 bg-zinc-100 hover:bg-zinc-200 transition-colors"
+                className="glass-btn-light hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold text-zinc-900 whitespace-nowrap"
               >
                 <span>Return to Website</span>
                 <ExternalLink className="w-3.5 h-3.5 text-[#135061]" />
               </Link>
 
               <button
+                type="button"
                 onClick={handleLogout}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold text-white bg-[#135061] hover:bg-[#007C89] transition-colors shadow-sm"
+                className="glass-btn-teal inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-2 rounded-full text-[11px] sm:text-xs font-bold text-white whitespace-nowrap"
               >
                 <LogOut className="w-3.5 h-3.5" />
                 <span>Sign Out</span>
@@ -592,27 +596,30 @@ export default function AdminDashboardPage() {
         </nav>
 
         {/* Mobile/Tablet Tab Switcher Pill Below Dynamic Island */}
-        <div className="pointer-events-auto lg:hidden max-w-xl mx-auto mt-2 flex items-center justify-center gap-1.5 bg-white/90 backdrop-blur-xl p-1.5 rounded-full border border-zinc-200/80 shadow-md">
+        <div className="pointer-events-auto lg:hidden max-w-xl mx-auto mt-2 flex items-center justify-center gap-1.5 glass-island-nav p-1.5 rounded-full">
           <button
+            type="button"
             onClick={() => setActiveTab("services")}
             className={`flex-1 py-2 px-2.5 rounded-full text-[11px] font-bold transition-all ${
-              activeTab === "services" ? "bg-[#135061] text-white" : "text-zinc-600"
+              activeTab === "services" ? "bg-[#135061] text-white shadow-sm" : "text-zinc-600"
             }`}
           >
             Services ({services.length})
           </button>
           <button
+            type="button"
             onClick={() => setActiveTab("bookings")}
             className={`flex-1 py-2 px-2.5 rounded-full text-[11px] font-bold transition-all ${
-              activeTab === "bookings" ? "bg-[#135061] text-white" : "text-zinc-600"
+              activeTab === "bookings" ? "bg-[#135061] text-white shadow-sm" : "text-zinc-600"
             }`}
           >
             Bookings ({bookings.length})
           </button>
           <button
+            type="button"
             onClick={() => setActiveTab("locations")}
             className={`flex-1 py-2 px-2.5 rounded-full text-[11px] font-bold transition-all ${
-              activeTab === "locations" ? "bg-[#135061] text-white" : "text-zinc-600"
+              activeTab === "locations" ? "bg-[#135061] text-white shadow-sm" : "text-zinc-600"
             }`}
           >
             Locations ({locations.length})
@@ -635,9 +642,9 @@ export default function AdminDashboardPage() {
             {activeTab === "services" && (
               <div className="space-y-6 animate-in fade-in duration-200">
                 {/* Section Header */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white rounded-3xl p-6 border border-zinc-200/80 shadow-sm">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 glass-card rounded-3xl p-6">
                   <div>
-                    <h1 className="text-2xl font-extrabold text-zinc-900 tracking-tight">
+                    <h1 className="text-2xl font-extrabold text-zinc-900 tracking-tight breathing-glow-text">
                       Services &amp; Products
                     </h1>
                     <p className="text-xs sm:text-sm text-zinc-500 mt-1">
@@ -648,15 +655,17 @@ export default function AdminDashboardPage() {
 
                   <div className="flex flex-wrap items-center gap-2.5">
                     <button
+                      type="button"
                       onClick={() => openAddItemModal("SERVICE")}
-                      className="inline-flex items-center gap-2 px-5 py-3 rounded-full text-xs font-bold text-white bg-[#135061] hover:bg-[#007C89] shadow-md transition-all active:scale-95"
+                      className="glass-btn-teal inline-flex items-center gap-2 px-5 py-3 rounded-full text-xs font-bold text-white"
                     >
                       <Plus className="w-4 h-4" />
                       <span>Add Service</span>
                     </button>
                     <button
+                      type="button"
                       onClick={() => openAddItemModal("PRODUCT")}
-                      className="inline-flex items-center gap-2 px-5 py-3 rounded-full text-xs font-bold text-zinc-900 bg-white border border-zinc-300 hover:border-[#135061] hover:bg-zinc-50 shadow-sm transition-all active:scale-95"
+                      className="glass-btn-light inline-flex items-center gap-2 px-5 py-3 rounded-full text-xs font-bold text-zinc-900"
                     >
                       <ShoppingBag className="w-4 h-4 text-[#135061]" />
                       <span>Add Product</span>
@@ -668,12 +677,13 @@ export default function AdminDashboardPage() {
                 <div className="flex items-center gap-2">
                   {(["ALL", "SERVICE", "PRODUCT"] as const).map((typeKey) => (
                     <button
+                      type="button"
                       key={typeKey}
                       onClick={() => setServiceTypeFilter(typeKey)}
                       className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${
                         serviceTypeFilter === typeKey
-                          ? "bg-[#135061] text-white shadow-sm"
-                          : "bg-white text-zinc-600 border border-zinc-200 hover:border-zinc-300"
+                          ? "glass-btn-teal text-white"
+                          : "glass-btn-light text-zinc-700"
                       }`}
                     >
                       {typeKey === "ALL" && `All (${services.length})`}
@@ -687,7 +697,7 @@ export default function AdminDashboardPage() {
 
                 {/* Items Grid */}
                 {displayedServices.length === 0 ? (
-                  <div className="bg-white rounded-3xl p-12 border border-zinc-200/80 text-center">
+                  <div className="glass-card rounded-3xl p-12 text-center">
                     <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-[#F0F9FA] border border-[#B2E2E6] flex items-center justify-center text-[#135061]">
                       <Plus className="w-6 h-6" />
                     </div>
@@ -706,7 +716,7 @@ export default function AdminDashboardPage() {
                       return (
                         <div
                           key={s.id}
-                          className="bg-white rounded-2xl border border-zinc-200/80 shadow-sm overflow-hidden flex flex-col justify-between hover:border-[#135061]/50 transition-all"
+                          className="glass-card glass-card-hover rounded-3xl overflow-hidden flex flex-col justify-between"
                         >
                           {s.imageUrl && (
                             <div className="h-40 w-full bg-zinc-100 border-b border-zinc-100 overflow-hidden">
@@ -810,7 +820,7 @@ export default function AdminDashboardPage() {
             {activeTab === "bookings" && (
               <div className="space-y-6 animate-in fade-in duration-200">
                 {/* Dedicated Financial Overview Section */}
-                <div className="bg-white rounded-3xl p-6 border border-zinc-200/80 shadow-sm">
+                <div className="glass-card rounded-3xl p-6">
                   <div className="flex items-center gap-2 mb-4">
                     <Wallet className="w-5 h-5 text-[#135061]" />
                     <h2 className="text-base font-extrabold text-zinc-900">
@@ -870,10 +880,10 @@ export default function AdminDashboardPage() {
                 </div>
 
                 {/* Unified Bookings & Appointments Table */}
-                <div className="bg-white rounded-3xl p-6 border border-zinc-200/80 shadow-sm">
+                <div className="glass-card rounded-3xl p-6">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                     <div>
-                      <h1 className="text-xl font-extrabold text-zinc-900">
+                      <h1 className="text-2xl font-extrabold text-zinc-900 tracking-tight breathing-glow-text">
                         Bookings &amp; Appointments
                       </h1>
                       <p className="text-xs text-zinc-500 mt-0.5">
@@ -1032,9 +1042,9 @@ export default function AdminDashboardPage() {
             {/* ================================================================= */}
             {activeTab === "locations" && (
               <div className="space-y-6 animate-in fade-in duration-200">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white rounded-3xl p-6 border border-zinc-200/80 shadow-sm">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 glass-card rounded-3xl p-6">
                   <div>
-                    <h1 className="text-2xl font-extrabold text-zinc-900 tracking-tight">
+                    <h1 className="text-2xl font-extrabold text-zinc-900 tracking-tight breathing-glow-text">
                       Locations &amp; Operating Times
                     </h1>
                     <p className="text-xs sm:text-sm text-zinc-500 mt-1">
@@ -1044,8 +1054,9 @@ export default function AdminDashboardPage() {
                   </div>
 
                   <button
+                    type="button"
                     onClick={openAddLocationModal}
-                    className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-xs font-bold text-white bg-[#135061] hover:bg-[#007C89] shadow-md transition-all active:scale-95"
+                    className="glass-btn-teal inline-flex items-center gap-2 px-6 py-3 rounded-full text-xs font-bold text-white"
                   >
                     <Plus className="w-4 h-4" />
                     <span>Add Location</span>
@@ -1053,7 +1064,7 @@ export default function AdminDashboardPage() {
                 </div>
 
                 {locations.length === 0 ? (
-                  <div className="bg-white rounded-3xl p-12 border border-zinc-200/80 text-center">
+                  <div className="glass-card rounded-3xl p-12 text-center">
                     <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-[#F0F9FA] border border-[#B2E2E6] flex items-center justify-center text-[#135061]">
                       <MapPin className="w-6 h-6" />
                     </div>
@@ -1072,7 +1083,7 @@ export default function AdminDashboardPage() {
                       return (
                         <div
                           key={loc.id}
-                          className="bg-white rounded-3xl p-6 border border-zinc-200/80 shadow-sm flex flex-col justify-between space-y-5"
+                          className="glass-card glass-card-hover rounded-3xl p-6 flex flex-col justify-between space-y-5"
                         >
                           <div>
                             {/* Location Header */}
@@ -1185,24 +1196,27 @@ export default function AdminDashboardPage() {
                           </div>
 
                           {/* Card Footer Actions */}
-                          <div className="grid grid-cols-3 gap-2 pt-3 border-t border-zinc-100">
+                          <div className="grid grid-cols-3 gap-2 pt-3 border-t border-zinc-200/50">
                             <button
+                              type="button"
                               onClick={() => openDailyOverrideModal(loc)}
-                              className="inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-bold text-white bg-[#135061] hover:bg-[#007C89] transition-colors"
+                              className="glass-btn-teal inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full text-xs font-bold text-white"
                             >
                               <CalendarClock className="w-3.5 h-3.5" />
                               <span>Set Day Hours</span>
                             </button>
                             <button
+                              type="button"
                               onClick={() => openEditLocationModal(loc)}
-                              className="inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-bold text-zinc-800 bg-zinc-100 hover:bg-zinc-200 transition-colors"
+                              className="glass-btn-light inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full text-xs font-bold text-zinc-900"
                             >
                               <Edit2 className="w-3.5 h-3.5 text-[#135061]" />
                               <span>Edit Weekly</span>
                             </button>
                             <button
+                              type="button"
                               onClick={() => handleDeleteLocation(loc)}
-                              className="inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-bold text-zinc-600 bg-zinc-100 hover:bg-red-50 hover:text-red-700 transition-colors"
+                              className="inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full text-xs font-bold text-zinc-600 bg-white/70 hover:bg-red-50 hover:text-red-700 border border-zinc-200/70 transition-colors"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
                               <span>Delete</span>
@@ -1225,14 +1239,14 @@ export default function AdminDashboardPage() {
       {itemModalOpen && (
         <div
           onClick={() => setItemModalOpen(false)}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/45 backdrop-blur-sm overflow-y-auto"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/45 backdrop-blur-md overflow-y-auto"
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden my-8"
+            className="w-full max-w-lg glass-modal-card rounded-3xl overflow-hidden my-8"
           >
-            <div className="px-6 py-5 border-b border-zinc-200 flex items-center justify-between">
-              <h3 className="text-lg font-extrabold text-zinc-900">
+            <div className="px-6 py-5 bg-white/35 border-b border-zinc-200/60 flex items-center justify-between">
+              <h3 className="text-lg font-extrabold text-zinc-900 breathing-glow-text">
                 {editingItem
                   ? `Edit ${itemType === "PRODUCT" ? "Product" : "Service"}`
                   : `Add New ${itemType === "PRODUCT" ? "Product" : "Service"}`}
@@ -1446,7 +1460,7 @@ export default function AdminDashboardPage() {
                 <button
                   type="submit"
                   disabled={savingItem}
-                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-xs font-bold text-white bg-[#135061] hover:bg-[#007C89] shadow-md disabled:opacity-50"
+                  className="glass-btn-teal inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-xs font-bold text-white"
                 >
                   {savingItem && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
                   <span>{editingItem ? "Save Changes" : "Publish Now"}</span>
@@ -1463,18 +1477,18 @@ export default function AdminDashboardPage() {
       {viewBooking && (
         <div
           onClick={() => setViewBooking(null)}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/45 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/45 backdrop-blur-md"
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden"
+            className="w-full max-w-lg glass-modal-card rounded-3xl overflow-hidden"
           >
-            <div className="px-6 py-5 border-b border-zinc-200 flex items-center justify-between">
+            <div className="px-6 py-5 bg-white/35 border-b border-zinc-200/60 flex items-center justify-between">
               <div>
-                <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-500">
                   Booking &amp; Appointment
                 </span>
-                <h3 className="text-xl font-extrabold text-[#135061]">
+                <h3 className="text-xl font-extrabold text-[#135061] breathing-glow-text">
                   {viewBooking.referenceCode}
                 </h3>
               </div>
@@ -1652,14 +1666,14 @@ export default function AdminDashboardPage() {
       {locationModalOpen && (
         <div
           onClick={() => setLocationModalOpen(false)}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/45 backdrop-blur-sm overflow-y-auto"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/45 backdrop-blur-md overflow-y-auto"
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-xl bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden my-8"
+            className="w-full max-w-xl glass-modal-card rounded-3xl overflow-hidden my-8"
           >
-            <div className="px-6 py-5 border-b border-zinc-200 flex items-center justify-between">
-              <h3 className="text-lg font-extrabold text-zinc-900">
+            <div className="px-6 py-5 bg-white/35 border-b border-zinc-200/60 flex items-center justify-between">
+              <h3 className="text-lg font-extrabold text-zinc-900 breathing-glow-text">
                 {editingLocation ? "Edit Location & Weekly Hours" : "Add New Location"}
               </h3>
               <button
@@ -1805,7 +1819,7 @@ export default function AdminDashboardPage() {
                 <button
                   type="submit"
                   disabled={savingLocation}
-                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-xs font-bold text-white bg-[#135061] hover:bg-[#007C89] shadow-md disabled:opacity-50"
+                  className="glass-btn-teal inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-xs font-bold text-white"
                 >
                   {savingLocation && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
                   <span>Save Location</span>
@@ -1822,18 +1836,18 @@ export default function AdminDashboardPage() {
       {overrideLocation && (
         <div
           onClick={() => setOverrideLocation(null)}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/45 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/45 backdrop-blur-md"
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden"
+            className="w-full max-w-md glass-modal-card rounded-3xl overflow-hidden"
           >
-            <div className="px-6 py-5 border-b border-zinc-200 flex items-center justify-between">
+            <div className="px-6 py-5 bg-white/35 border-b border-zinc-200/60 flex items-center justify-between">
               <div>
                 <span className="text-[11px] font-bold uppercase tracking-wider text-[#135061]">
                   Daily Schedule Override
                 </span>
-                <h3 className="text-lg font-extrabold text-zinc-900">
+                <h3 className="text-lg font-extrabold text-zinc-900 breathing-glow-text">
                   {overrideLocation.name}
                 </h3>
               </div>
@@ -1931,7 +1945,7 @@ export default function AdminDashboardPage() {
                 <button
                   type="submit"
                   disabled={savingOverride}
-                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-xs font-bold text-white bg-[#135061] hover:bg-[#007C89] shadow-md disabled:opacity-50"
+                  className="glass-btn-teal inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-xs font-bold text-white"
                 >
                   {savingOverride && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
                   <span>Save Day Availability</span>
@@ -1942,8 +1956,8 @@ export default function AdminDashboardPage() {
         </div>
       )}
 
-      {/* Clean Light Footer */}
-      <footer className="text-center py-5 text-xs text-zinc-500 border-t border-zinc-200 bg-white">
+      {/* Seamless #FAF9F6 Admin Footer (Zero harsh top line or white contrast strip) */}
+      <footer className="text-center py-6 text-xs text-zinc-500 bg-[#FAF9F6]">
         Totus Massage &amp; Aesthetics • Admin Management ({adminEmail})
       </footer>
 

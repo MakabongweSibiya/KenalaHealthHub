@@ -37,12 +37,12 @@ export function ConfirmationModal({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-sm bg-white rounded-3xl p-7 border border-zinc-200 shadow-2xl text-center animate-in zoom-in-95 duration-200 cursor-default"
+        className="w-full max-w-sm glass-modal-card rounded-3xl p-7 text-center animate-in zoom-in-95 duration-200 cursor-default"
       >
         <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-[#F0F9FA] border border-[#B2E2E6] flex items-center justify-center">
           <Check className="w-7 h-7 text-[#135061] stroke-[2.75]" />
         </div>
-        <h3 className="text-lg font-extrabold text-zinc-900 tracking-tight">
+        <h3 className="text-lg font-extrabold text-zinc-900 tracking-tight breathing-glow-text">
           {title}
         </h3>
         {message && (

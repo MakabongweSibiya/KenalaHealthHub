@@ -26,6 +26,7 @@ import {
   isValidIsoDate,
   NO_STORE_HEADERS,
 } from "@/lib/security";
+import { logAuditEvent } from "@/lib/audit";
 
 const CREATE_MAX_REQUESTS = 15;
 const CREATE_WINDOW_MS = 15 * 60 * 1000; // 15 minutes
@@ -266,6 +267,22 @@ export async function POST(req: Request) {
     }
 
     payfastData.signature = generatePayFastSignature(payfastData, passphrase);
+
+    await logAuditEvent({
+      eventType: "BOOKING_CREATED",
+      actor: trimmedEmail,
+      req,
+      resourceId: booking.referenceCode,
+      status: "OK",
+      metadata: {
+        serviceName: service.name,
+        appointmentDate,
+        timeSlot: cleanTimeSlot,
+        amountToPay,
+        totalAmount,
+        paymentChoice: normalizedChoice,
+      },
+    });
 
     return NextResponse.json(
       {

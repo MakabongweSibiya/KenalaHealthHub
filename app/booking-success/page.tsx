@@ -1,12 +1,12 @@
 "use client";
 
 /**
- * Totus Massage & Aesthetics — Secure Post-PayFast Return Confirmation Page
+ * Totus Massage & Aesthetics — Glassmorphic Post-PayFast Verification & Confirmation Page
  *
  * Security design:
- * Queries the strictly read-only `/api/bookings/status` endpoint to verify whether
- * PayFast's server-to-server ITN webhook has authenticated and finalized payment.
- * Never self-confirms unpaid bookings on the client side.
+ * Displays a refined glassmorphic verification card while polling the strictly read-only
+ * `/api/bookings/status` endpoint until PayFast's genuine server-to-server ITN webhook
+ * cryptographically verifies and confirms the payment. Never self-confirms unpaid bookings.
  */
 
 import React, { useEffect, useState, Suspense } from "react";
@@ -16,13 +16,14 @@ import confetti from "canvas-confetti";
 import { BrandLogo } from "@/components/BrandLogo";
 import {
   CheckCircle2,
+  Loader2,
   Clock,
   MessageCircle,
   Download,
   Copy,
   Check,
   ArrowRight,
-  Home,
+  ArrowLeft,
 } from "lucide-react";
 
 interface SafeBookingStatus {
@@ -54,7 +55,7 @@ function BookingSuccessContent() {
   useEffect(() => {
     let active = true;
     let pollAttempts = 0;
-    const maxPolls = 6; // Poll up to ~12s while PayFast server-to-server ITN finalizes
+    const maxPolls = 8; // Poll ~16s while PayFast server-to-server ITN settles
 
     async function fetchStatus() {
       if (!refCode) {
@@ -153,62 +154,75 @@ function BookingSuccessContent() {
   )}`;
 
   return (
-    <div className="min-h-screen bg-[#FAF9F6] flex flex-col justify-between">
-      {/* Top Header */}
-      <header className="bg-white/90 backdrop-blur-xl border-b border-zinc-200/80 py-4 px-6 shadow-sm">
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <Link href="/">
-            <BrandLogo size="sm" />
+    <div className="min-h-screen bg-[#FAF9F6] flex flex-col justify-between relative overflow-hidden">
+      {/* Floating Glassmorphic Dynamic Island Navbar */}
+      <header className="fixed top-3 sm:top-4 left-0 right-0 z-40 px-3 sm:px-6 pointer-events-none">
+        <nav className="pointer-events-auto max-w-7xl mx-auto rounded-full glass-island-nav px-3.5 sm:px-8 py-2.5 sm:py-3.5 flex items-center justify-between gap-2 sm:gap-4">
+          <Link href="/" className="flex items-center min-w-0 focus:outline-none">
+            <BrandLogo size="md" breathingGlow />
           </Link>
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 text-xs font-bold text-zinc-600 hover:text-[#135061] transition-colors"
+            className="glass-btn-light flex-shrink-0 inline-flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-full text-[11px] sm:text-sm font-bold text-zinc-900 whitespace-nowrap"
           >
-            <Home className="w-3.5 h-3.5" /> Back to Home
+            <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#135061]" />
+            <span>Back to Home</span>
           </Link>
-        </div>
+        </nav>
       </header>
 
-      {/* Main Content */}
-      <main className="max-w-xl mx-auto px-4 py-12 w-full">
-        <div className="bg-white rounded-3xl shadow-xl border border-zinc-200/80 overflow-hidden">
-          {/* Header */}
-          <div className="bg-[#135061] text-white p-8 text-center border-b-4 border-[#E86689]/70 relative">
-            <div className="w-16 h-16 mx-auto rounded-full bg-white/15 border border-white/30 flex items-center justify-center text-white mb-4">
+      {/* Main Glassmorphic Verification / Confirmation Card */}
+      <main className="max-w-xl mx-auto px-4 pt-32 pb-14 w-full flex-1 flex items-center">
+        <div className="w-full glass-modal-card rounded-3xl overflow-hidden">
+          {/* Clean Glass Header */}
+          <div className="bg-white/40 backdrop-blur-md p-7 sm:p-8 text-center border-b border-zinc-200/60">
+            <div className="w-16 h-16 mx-auto rounded-full bg-[#F0F9FA] border border-[#B2E2E6] flex items-center justify-center text-[#135061] mb-4 shadow-sm">
               {isConfirmed ? (
-                <CheckCircle2 className="w-9 h-9 text-white" />
+                <CheckCircle2 className="w-9 h-9 text-[#135061]" />
+              ) : loading ? (
+                <Loader2 className="w-8 h-8 text-[#135061] animate-spin" />
               ) : (
-                <Clock className="w-8 h-8 text-white animate-pulse" />
+                <Clock className="w-8 h-8 text-[#135061]" />
               )}
             </div>
 
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+            <span className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-[#135061] block mb-1.5">
+              {isConfirmed
+                ? "Payment Verified"
+                : loading
+                ? "Awaiting Gateway Confirmation"
+                : "Verification Pending"}
+            </span>
+
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-zinc-900 tracking-tight breathing-glow-text">
               {isConfirmed
                 ? "Booking Confirmed"
                 : loading
-                ? "Verifying Payment..."
+                ? "Verifying Your Payment..."
                 : "Payment Processing"}
             </h1>
-            <p className="text-xs text-white/80 mt-1.5 max-w-sm mx-auto">
+
+            <p className="text-xs sm:text-sm text-zinc-600 mt-2 max-w-sm mx-auto leading-relaxed">
               {isConfirmed
-                ? "Your payment has been verified and your session at Totus Massage & Aesthetics is officially reserved."
-                : "We have received your return from PayFast. Your official receipt will arrive via email as soon as gateway confirmation completes."}
+                ? "Your payment has been verified directly with PayFast and your session at Totus Massage & Aesthetics is officially reserved."
+                : "Please hold on a brief moment while we confirm your transaction directly with PayFast. Your official receipt will email automatically once verified."}
             </p>
 
-            {/* Reference Badge */}
-            <div className="inline-flex items-center gap-2 mt-5 px-4 py-2 rounded-full bg-black/20 border border-white/20 text-xs">
-              <span className="text-white/75">Reference:</span>
-              <span className="font-extrabold text-white text-sm tracking-wider">
+            {/* Reference Pill */}
+            <div className="inline-flex items-center gap-2 mt-5 px-4 py-2 rounded-full bg-white/80 border border-zinc-200/80 text-xs shadow-sm">
+              <span className="text-zinc-500 font-medium">Reference:</span>
+              <span className="font-extrabold text-[#135061] text-sm tracking-wider">
                 {refCode || "TOT-PENDING"}
               </span>
               {refCode && (
                 <button
+                  type="button"
                   onClick={copyRefCode}
-                  className="p-1 text-white/75 hover:text-white transition-colors"
+                  className="p-1 text-zinc-400 hover:text-[#135061] transition-colors"
                   title="Copy reference code"
                 >
                   {copied ? (
-                    <Check className="w-3.5 h-3.5 text-white" />
+                    <Check className="w-3.5 h-3.5 text-[#135061]" />
                   ) : (
                     <Copy className="w-3.5 h-3.5" />
                   )}
@@ -220,22 +234,22 @@ function BookingSuccessContent() {
           {/* Details */}
           <div className="p-6 sm:p-8 space-y-5">
             <div className="space-y-2">
-              <div className="flex items-center gap-2.5 p-3 rounded-xl bg-[#FAF9F6] text-zinc-800 border border-zinc-200/80 text-xs font-semibold">
+              <div className="flex items-center gap-2.5 p-3 rounded-xl bg-white/70 text-zinc-800 border border-zinc-200/70 text-xs font-semibold">
                 <span className="w-2 h-2 rounded-full bg-[#135061]" />
                 <span>
                   {isConfirmed
                     ? "Official booking receipt dispatched to your email"
-                    : "Awaiting final PayFast Instant Transaction Notification (ITN)"}
+                    : "Listening securely for PayFast Instant Transaction Notification"}
                 </span>
               </div>
-              <div className="flex items-center gap-2.5 p-3 rounded-xl bg-[#FAF9F6] text-zinc-700 border border-zinc-200/80 text-xs font-semibold">
+              <div className="flex items-center gap-2.5 p-3 rounded-xl bg-white/70 text-zinc-700 border border-zinc-200/70 text-xs font-semibold">
                 <span className="w-2 h-2 rounded-full bg-[#E86689]" />
                 <span>Totus Massage Therapist Direct Line: 079 011 8464</span>
               </div>
             </div>
 
             {booking && (
-              <div className="bg-[#FAF9F6] rounded-2xl p-4 border border-zinc-200/80 text-xs space-y-2.5">
+              <div className="bg-white/75 rounded-2xl p-4 border border-zinc-200/70 text-xs space-y-2.5">
                 <div className="flex justify-between py-1 border-b border-zinc-200/60">
                   <span className="text-zinc-500">Treatment / Item:</span>
                   <strong className="text-zinc-900">{booking.serviceName}</strong>
@@ -255,11 +269,13 @@ function BookingSuccessContent() {
                   <strong className="text-zinc-900">{booking.area}</strong>
                 </div>
                 <div className="flex justify-between pt-1 font-bold text-[#135061] text-sm">
-                  <span>{isConfirmed ? "Amount Paid:" : "Deposit Due:"}</span>
+                  <span>{isConfirmed ? "Amount Paid:" : "Expected Payment:"}</span>
                   <span>
                     R
                     {(isConfirmed
                       ? booking.amountPaid
+                      : booking.paymentChoice === "FULL_100"
+                      ? booking.totalAmount
                       : Math.min(200, booking.totalAmount)
                     ).toFixed(2)}
                   </span>
@@ -273,12 +289,13 @@ function BookingSuccessContent() {
               </div>
             )}
 
-            {/* Action Buttons */}
+            {/* Glassmorphic Action Buttons */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
               <button
+                type="button"
                 onClick={downloadIcs}
                 disabled={!booking}
-                className="flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs font-bold text-zinc-900 bg-zinc-100 hover:bg-zinc-200 disabled:opacity-50 transition-colors"
+                className="glass-btn-light flex items-center justify-center gap-2 py-3 px-4 rounded-full text-xs font-bold text-zinc-900 disabled:opacity-50"
               >
                 <Download className="w-4 h-4 text-[#135061]" />
                 Add to Calendar (.ics)
@@ -288,7 +305,7 @@ function BookingSuccessContent() {
                 href={whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs font-bold text-white bg-[#135061] hover:bg-[#007C89] transition-colors shadow-sm"
+                className="glass-btn-teal flex items-center justify-center gap-2 py-3 px-4 rounded-full text-xs font-bold text-white"
               >
                 <MessageCircle className="w-4 h-4" />
                 WhatsApp Therapist
@@ -307,8 +324,8 @@ function BookingSuccessContent() {
         </div>
       </main>
 
-      {/* Mini Footer */}
-      <footer className="text-center py-6 text-xs text-zinc-500 border-t border-zinc-200 bg-white">
+      {/* Seamless #FAF9F6 Footer */}
+      <footer className="text-center py-6 text-xs text-zinc-500 bg-[#FAF9F6]">
         Totus Massage &amp; Aesthetics • Serenity, Beauty &amp; Pure Rejuvenation
       </footer>
     </div>

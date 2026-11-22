@@ -16,6 +16,7 @@ import {
   validateSafeImageUrl,
   NO_STORE_HEADERS,
 } from "@/lib/security";
+import { logAuditEvent } from "@/lib/audit";
 
 function createSlug(name: string): string {
   const base = name
@@ -131,6 +132,15 @@ export async function POST(req: Request) {
       },
     });
 
+    await logAuditEvent({
+      eventType: "SERVICE_CREATED",
+      actor: admin.email,
+      req,
+      resourceId: created.id,
+      status: "OK",
+      metadata: { name: created.name, itemType: created.itemType, price: created.price },
+    });
+
     return NextResponse.json(
       { success: true, service: created },
       { status: 201, headers: NO_STORE_HEADERS }
@@ -233,6 +243,15 @@ export async function PATCH(req: Request) {
       data: updateData,
     });
 
+    await logAuditEvent({
+      eventType: "SERVICE_UPDATED",
+      actor: admin.email,
+      req,
+      resourceId: updated.id,
+      status: "OK",
+      metadata: { name: updated.name, isActive: updated.isActive, price: updated.price },
+    });
+
     return NextResponse.json(
       { success: true, service: updated },
       { headers: NO_STORE_HEADERS }
@@ -267,6 +286,13 @@ export async function DELETE(req: Request) {
     }
 
     await prisma.service.delete({ where: { id } });
+    await logAuditEvent({
+      eventType: "SERVICE_DELETED",
+      actor: admin.email,
+      req,
+      resourceId: id,
+      status: "OK",
+    });
     return NextResponse.json({ success: true }, { headers: NO_STORE_HEADERS });
   } catch (error) {
     console.error("Service delete error:", error);

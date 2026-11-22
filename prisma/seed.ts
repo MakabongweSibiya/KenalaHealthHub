@@ -4,7 +4,14 @@ import bcrypt from "bcryptjs";
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log("🌸 Seeding Totus Massage & Aesthetics database...");
+  console.log("Seeding Totus Massage & Aesthetics database...");
+
+  const adminEmail = (
+    process.env.ADMIN_NOTIFICATION_EMAIL || "totusmassages@gmail.com"
+  )
+    .toLowerCase()
+    .trim();
+  const seedPassword = process.env.ADMIN_SEED_PASSWORD?.trim();
 
   // 1. Seed Studio Settings
   await prisma.clinicSetting.upsert({
@@ -12,7 +19,7 @@ async function main() {
     update: {
       clinicName: "Totus Massage & Aesthetics",
       practitionerName: "Totus Admin",
-      adminAlertEmail: "totusmassages@gmail.com",
+      adminAlertEmail: adminEmail,
     },
     create: {
       id: "default",
@@ -21,37 +28,39 @@ async function main() {
       phone: "079 011 8464",
       whatsappNumber: "079 011 8464",
       address: "Pretoria East",
-      operatingHours:
-        "Monday – Saturday: 08:00 – 17:00 | Sunday & Public Holidays: By appointment",
-      defaultRetainerPercent: 30.0,
-      adminAlertEmail: "totusmassages@gmail.za",
+      operatingHours: "Managed dynamically via Admin Portal",
+      defaultRetainerPercent: 0,
+      adminAlertEmail: adminEmail,
     },
   });
 
-  // 2. Remove any legacy admin emails and seed official Totus Admin account
-  await prisma.admin.deleteMany({
-    where: { email: { not: "totusmassages@gmail.com" } },
-  });
+  // 2. Seed Admin account only when ADMIN_SEED_PASSWORD is provided via environment
+  if (!seedPassword || seedPassword.length < 8) {
+    console.log(
+      "Skipping Admin password seed: set ADMIN_SEED_PASSWORD (>=8 chars) in env to initialize/reset admin."
+    );
+    return;
+  }
 
-  const passwordHash = await bcrypt.hash("Nala012!", 12);
+  const passwordHash = await bcrypt.hash(seedPassword, 12);
 
   await prisma.admin.upsert({
-    where: { email: "totusmassages@gmail.com" },
+    where: { email: adminEmail },
     update: { passwordHash, name: "Totus Admin", role: "SUPER_ADMIN" },
     create: {
-      email: "totusmassages@gmail.com",
+      email: adminEmail,
       name: "Totus Admin",
       passwordHash,
       role: "SUPER_ADMIN",
     },
   });
 
-  console.log("✅ Studio settings and Admin account (totusmassages@gmail.com) ready.");
+  console.log(`Studio settings and Admin account (${adminEmail}) ready.`);
 }
 
 main()
   .catch((e) => {
-    console.error("❌ Seed error:", e);
+    console.error("Seed error:", e);
     process.exit(1);
   })
   .finally(async () => {

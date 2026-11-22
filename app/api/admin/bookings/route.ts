@@ -13,6 +13,7 @@ import {
   isValidIsoDate,
   NO_STORE_HEADERS,
 } from "@/lib/security";
+import { logAuditEvent } from "@/lib/audit";
 
 const ALLOWED_STATUSES = new Set([
   "PENDING_PAYMENT",
@@ -128,6 +129,15 @@ export async function PATCH(req: Request) {
       where: { id: id.trim() },
       data: updateData,
       include: { service: true, payments: true },
+    });
+
+    await logAuditEvent({
+      eventType: "BOOKING_UPDATED",
+      actor: admin.email,
+      req,
+      resourceId: updated.referenceCode,
+      status: "OK",
+      metadata: { status: updated.status, balancePaid: updated.balancePaid },
     });
 
     return NextResponse.json(

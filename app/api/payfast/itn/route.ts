@@ -17,6 +17,7 @@ import {
 import { FIXED_DEPOSIT_AMOUNT } from "@/lib/validation";
 import { sendAdminWhatsAppNotification } from "@/lib/whatsapp";
 import { sendBookingEmails } from "@/lib/email";
+import { logAuditEvent } from "@/lib/audit";
 
 export async function POST(req: Request) {
   try {
@@ -80,12 +81,28 @@ export async function POST(req: Request) {
     // Reject forged or invalid signatures immediately
     if (!isSignatureValid) {
       console.warn(`[PayFast ITN Rejected] Invalid signature for ref ${bookingRef}`);
+      await logAuditEvent({
+        eventType: "PAYFAST_ITN_REJECTED",
+        actor: "payfast_webhook",
+        req,
+        resourceId: bookingRef,
+        status: "REJECTED",
+        metadata: { reason: "invalid_signature", paymentStatus, amountGross },
+      });
       return new Response("Invalid signature", { status: 403 });
     }
 
     // 2. Verify merchant ownership
     if (expectedMerchantId && receivedMerchantId !== expectedMerchantId) {
       console.warn(`[PayFast ITN Rejected] Merchant ID mismatch for ref ${bookingRef}`);
+      await logAuditEvent({
+        eventType: "PAYFAST_ITN_REJECTED",
+        actor: "payfast_webhook",
+        req,
+        resourceId: bookingRef,
+        status: "REJECTED",
+        metadata: { reason: "merchant_mismatch" },
+      });
       return new Response("Merchant mismatch", { status: 403 });
     }
 
@@ -100,6 +117,14 @@ export async function POST(req: Request) {
       console.warn(
         `[PayFast ITN Rejected] Amount mismatch for ref ${bookingRef}: received ${amountGross}, expected ${expectedAmount}`
       );
+      await logAuditEvent({
+        eventType: "PAYFAST_ITN_REJECTED",
+        actor: "payfast_webhook",
+        req,
+        resourceId: bookingRef,
+        status: "REJECTED",
+        metadata: { reason: "amount_mismatch", amountGross, expectedAmount },
+      });
       return new Response("Amount mismatch", { status: 400 });
     }
 
@@ -107,6 +132,14 @@ export async function POST(req: Request) {
     const isConfirmedByPayFast = await confirmPayFastItnWithGateway(rawBody);
     if (!isConfirmedByPayFast) {
       console.warn(`[PayFast ITN Rejected] Gateway validation failed for ref ${bookingRef}`);
+      await logAuditEvent({
+        eventType: "PAYFAST_ITN_REJECTED",
+        actor: "payfast_webhook",
+        req,
+        resourceId: bookingRef,
+        status: "REJECTED",
+        metadata: { reason: "gateway_validate_failed", pfPaymentId },
+      });
       return new Response("Gateway validation failed", { status: 403 });
     }
 
@@ -129,6 +162,20 @@ export async function POST(req: Request) {
           payfastPaymentId: pfPaymentId,
         },
         include: { service: true },
+      });
+
+      await logAuditEvent({
+        eventType: "PAYFAST_ITN_VERIFIED",
+        actor: "payfast_webhook",
+        req,
+        resourceId: updatedBooking.referenceCode,
+        status: "OK",
+        metadata: {
+          pfPaymentId,
+          amountGross,
+          balanceDue: updatedBooking.balanceDue,
+          serviceName: updatedBooking.service.name,
+        },
       });
 
       // Dispatch WhatsApp & Dual-Perspective Email Receipts

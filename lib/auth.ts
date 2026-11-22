@@ -20,11 +20,10 @@ import {
 
 function getJwtSecret(): string {
   const envSecret = process.env.JWT_SECRET?.trim();
-  if (envSecret && envSecret.length >= 24) {
-    return envSecret;
+  if (!envSecret || envSecret.length < 24) {
+    throw new Error("CRITICAL: JWT_SECRET environment variable is missing or too short.");
   }
-  // Development-only fallback; production deployments strictly load JWT_SECRET from encrypted env
-  return "kenala_health_hub_jwt_secure_key_2026_equestria_nellmapius";
+  return envSecret;
 }
 
 export const ADMIN_COOKIE_NAME = "totus_admin_session";
@@ -42,7 +41,7 @@ export interface AdminJwtPayload {
   role: string;
 }
 
-const MAX_LOGIN_ATTEMPTS = 5;
+const MAX_LOGIN_ATTEMPTS = 3;
 const LOGIN_WINDOW_MS = 15 * 60 * 1000; // 15 minutes
 const LOGIN_LOCKOUT_MS = 15 * 60 * 1000; // 15 minutes
 

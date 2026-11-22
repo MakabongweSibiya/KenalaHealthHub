@@ -70,11 +70,12 @@ export async function middleware(request: NextRequest) {
 
   if (pathname.startsWith("/admin/dashboard")) {
     const token = request.cookies.get(ADMIN_COOKIE_NAME)?.value;
-    const secret =
-      process.env.JWT_SECRET ||
-      "kenala_health_hub_jwt_secure_key_2026_equestria_nellmapius";
+    const secret = process.env.JWT_SECRET?.trim();
 
-    const isValid = token ? await verifyEdgeAdminJwt(token, secret) : false;
+    // Fail closed if JWT_SECRET is absent or token verification fails
+    const isValid =
+      Boolean(secret && secret.length >= 24 && token) &&
+      (await verifyEdgeAdminJwt(token!, secret!));
 
     if (!isValid) {
       const loginUrl = new URL("/admin/login", request.url);

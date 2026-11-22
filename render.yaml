@@ -18,11 +18,11 @@ services:
       - key: PAYFAST_SANDBOX
         value: "false"
       - key: PAYFAST_MERCHANT_ID
-        value: "35356073"
+        sync: false
       - key: PAYFAST_MERCHANT_KEY
-        value: "njrtvv2ytepwn"
+        sync: false
       - key: PAYFAST_PASSPHRASE
-        value: ""
+        sync: false
       - key: JWT_SECRET
         generateValue: true
       - key: ADMIN_NOTIFICATION_WHATSAPP

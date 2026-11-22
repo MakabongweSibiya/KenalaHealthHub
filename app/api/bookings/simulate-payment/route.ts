@@ -12,12 +12,20 @@ import { prisma } from "@/lib/prisma";
 import { getAuthenticatedAdmin } from "@/lib/auth";
 import { FIXED_DEPOSIT_AMOUNT } from "@/lib/validation";
 import { NO_STORE_HEADERS } from "@/lib/security";
+import { logAuditEvent } from "@/lib/audit";
 import { sendAdminWhatsAppNotification } from "@/lib/whatsapp";
 import { sendBookingEmails } from "@/lib/email";
 
 export async function POST(req: Request) {
   // Hard production block: never allow simulated payment confirmation outside sandbox mode
   if (process.env.PAYFAST_SANDBOX !== "true") {
+    await logAuditEvent({
+      eventType: "PAYMENT_BYPASS_BLOCKED",
+      actor: "public",
+      req,
+      status: "BLOCKED",
+      metadata: { endpoint: "/api/bookings/simulate-payment" },
+    });
     return NextResponse.json(
       { error: "Simulated confirmation is disabled in live payment mode." },
       { status: 403, headers: NO_STORE_HEADERS }

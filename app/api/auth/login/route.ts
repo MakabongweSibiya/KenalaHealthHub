@@ -20,6 +20,7 @@ import {
   clearLoginAttempts,
 } from "@/lib/auth";
 import { getClientIp, NO_STORE_HEADERS } from "@/lib/security";
+import { logAuditEvent } from "@/lib/audit";
 
 export async function POST(req: Request) {
   try {
@@ -57,6 +58,13 @@ export async function POST(req: Request) {
         emailLimit.retryAfterSeconds
       );
       const retryMinutes = Math.ceil(retrySeconds / 60);
+      await logAuditEvent({
+        eventType: "ADMIN_LOGIN_LOCKED",
+        actor: cleanEmail,
+        req,
+        status: "BLOCKED",
+        metadata: { retrySeconds },
+      });
       return NextResponse.json(
         {
           error: `Too many failed login attempts. Access is temporarily locked for ${retryMinutes} minute${
@@ -88,6 +96,14 @@ export async function POST(req: Request) {
         recordFailedLogin(emailKey),
       ]);
 
+      await logAuditEvent({
+        eventType: failIp.lockedOut ? "ADMIN_LOGIN_LOCKED" : "ADMIN_LOGIN_FAILED",
+        actor: cleanEmail,
+        req,
+        status: failIp.lockedOut ? "BLOCKED" : "REJECTED",
+        metadata: { reason: "invalid_credentials", remainingAttempts: failIp.remainingAttempts },
+      });
+
       return NextResponse.json(
         {
           error: failIp.lockedOut
@@ -110,6 +126,14 @@ export async function POST(req: Request) {
       const remaining = Math.min(failIp.remainingAttempts, failEmail.remainingAttempts);
       const isLocked = failIp.lockedOut || failEmail.lockedOut;
 
+      await logAuditEvent({
+        eventType: isLocked ? "ADMIN_LOGIN_LOCKED" : "ADMIN_LOGIN_FAILED",
+        actor: cleanEmail,
+        req,
+        status: isLocked ? "BLOCKED" : "REJECTED",
+        metadata: { reason: "invalid_password", remainingAttempts: remaining },
+      });
+
       return NextResponse.json(
         {
           error: isLocked
@@ -123,7 +147,17 @@ export async function POST(req: Request) {
     }
 
     // 4. Clear failed attempt buckets on successful login
-    await Promise.all([clearLoginAttempts(ipKey), clearLoginAttempts(emailKey)]);
+    await Promise.all([
+      clearLoginAttempts(ipKey),
+      clearLoginAttempts(emailKey),
+      logAuditEvent({
+        eventType: "ADMIN_LOGIN_SUCCESS",
+        actor: admin.email,
+        req,
+        resourceId: admin.id,
+        status: "OK",
+      }),
+    ]);
 
     // 5. Sign hardened HS256 JWT session
     const token = signAdminToken({

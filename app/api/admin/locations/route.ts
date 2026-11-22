@@ -16,6 +16,7 @@ import {
   isValidIsoDate,
   NO_STORE_HEADERS,
 } from "@/lib/security";
+import { logAuditEvent } from "@/lib/audit";
 
 export async function GET() {
   try {
@@ -90,6 +91,15 @@ export async function POST(req: Request) {
         weeklyHours,
       },
       include: { overrides: true },
+    });
+
+    await logAuditEvent({
+      eventType: "LOCATION_CREATED",
+      actor: admin.email,
+      req,
+      resourceId: created.id,
+      status: "OK",
+      metadata: { name: created.name, type: created.type },
     });
 
     return NextResponse.json(
@@ -222,6 +232,19 @@ export async function PATCH(req: Request) {
       include: { overrides: { orderBy: { date: "asc" } } },
     });
 
+    await logAuditEvent({
+      eventType: "LOCATION_UPDATED",
+      actor: admin.email,
+      req,
+      resourceId: cleanId,
+      status: "OK",
+      metadata: {
+        hasOverride: Boolean(override?.date),
+        overrideDate: override?.date || null,
+        deletedOverrideDate: deleteOverrideDate || null,
+      },
+    });
+
     return NextResponse.json(
       { success: true, location: refreshed },
       { headers: NO_STORE_HEADERS }
@@ -256,6 +279,13 @@ export async function DELETE(req: Request) {
     }
 
     await prisma.location.delete({ where: { id } });
+    await logAuditEvent({
+      eventType: "LOCATION_DELETED",
+      actor: admin.email,
+      req,
+      resourceId: id,
+      status: "OK",
+    });
     return NextResponse.json({ success: true }, { headers: NO_STORE_HEADERS });
   } catch (error) {
     console.error("Location delete error:", error);

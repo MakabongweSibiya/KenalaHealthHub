@@ -120,6 +120,22 @@ model RateLimit {
   updatedAt   DateTime  @updatedAt
 }
 
+model AuditLog {
+  id         String   @id @default(cuid())
+  eventType  String   // e.g. ADMIN_LOGIN_SUCCESS, BOOKING_CREATED, PAYFAST_ITN_VERIFIED
+  actor      String   // admin email, client reference, or "system"
+  ipAddress  String?
+  userAgent  String?
+  resourceId String?  // booking ref, service id, location id
+  status     String   @default("OK") // OK, REJECTED, BLOCKED, ERROR
+  metadata   Json?
+  createdAt  DateTime @default(now())
+
+  @@index([eventType])
+  @@index([actor])
+  @@index([createdAt])
+}
+
 model ClinicSetting {
   id                     String   @id @default("default")
   clinicName             String   @default("Totus Massage & Aesthetics")

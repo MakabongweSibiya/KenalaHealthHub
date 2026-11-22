@@ -67,7 +67,7 @@ export function ServiceDetailModal({
           <span className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-[#135061] block mb-1.5">
             {isProduct ? "Product" : service.category}
           </span>
-          <h2 className="text-xl sm:text-2xl font-extrabold text-zinc-900 pr-10">
+          <h2 className="text-xl sm:text-2xl font-extrabold text-zinc-900 pr-10 breathing-glow-text">
             {service.name}
           </h2>
           {!isProduct && service.durationMinutes > 0 && (

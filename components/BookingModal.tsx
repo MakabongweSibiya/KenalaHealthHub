@@ -503,7 +503,7 @@ export function BookingModal({
           <span className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-[#135061] block mb-1.5">
             Step {step} of 3
           </span>
-          <h2 className="text-xl sm:text-2xl font-extrabold text-zinc-900 pr-10 leading-snug">
+          <h2 className="text-xl sm:text-2xl font-extrabold text-zinc-900 pr-10 leading-snug breathing-glow-text">
             {step === 1 && (isProduct ? "Select Product & Date" : "Select Treatment, Location & Time")}
             {step === 2 && "Your Contact Details"}
             {step === 3 && "Payment & Confirmation"}
