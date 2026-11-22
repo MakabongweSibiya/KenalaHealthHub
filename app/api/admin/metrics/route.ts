@@ -1,11 +1,22 @@
+/**
+ * Totus Massage & Aesthetics — Admin Financial & Operational Metrics API
+ *
+ * Strictly requires authenticated Admin JWT + Neon DB verification.
+ * Returns zero-cached real-time booking & revenue aggregates.
+ */
+
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getAuthenticatedAdmin } from "@/lib/auth";
+import { NO_STORE_HEADERS } from "@/lib/security";
 
 export async function GET() {
   const admin = await getAuthenticatedAdmin();
   if (!admin) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json(
+      { error: "Unauthorized" },
+      { status: 401, headers: NO_STORE_HEADERS }
+    );
   }
 
   try {
@@ -52,21 +63,27 @@ export async function GET() {
       }
     }
 
-    return NextResponse.json({
-      metrics: {
-        totalBookings,
-        confirmedBookings,
-        pendingBookings,
-        completedBookings,
-        totalRevenueCollected: totalRetainersCollected + totalBalancesCollected,
-        totalRetainersCollected,
-        totalBalancesCollected,
-        totalPendingBalance,
+    return NextResponse.json(
+      {
+        metrics: {
+          totalBookings,
+          confirmedBookings,
+          pendingBookings,
+          completedBookings,
+          totalRevenueCollected: totalRetainersCollected + totalBalancesCollected,
+          totalRetainersCollected,
+          totalBalancesCollected,
+          totalPendingBalance,
+        },
+        recentBookings,
       },
-      recentBookings,
-    });
-  } catch (error: any) {
+      { headers: NO_STORE_HEADERS }
+    );
+  } catch (error) {
     console.error("Metrics API error:", error);
-    return NextResponse.json({ error: "Failed to fetch metrics" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to fetch metrics" },
+      { status: 500, headers: NO_STORE_HEADERS }
+    );
   }
 }

@@ -11,12 +11,12 @@
 
 body {
   font-family: var(--font-sans);
-  background-color: #FAFAFA;
+  background-color: #FAF9F6;
   color: #111111;
   overflow-x: hidden;
 }
 
-/* Custom Red Shake Animation for Input Validation Errors */
+/* Validation Error Micro-Shake (Form Inputs Only) */
 @keyframes shakeInput {
   0%, 100% {
     transform: translateX(0);
@@ -39,54 +39,181 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: #f5f4f0;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #007C89;
+  background: #135061;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #005C66;
+  background: #007C89;
 }
 
-/* Authentic Heartbeat ECG Pulse Animation (Lub-Dub rhythm + Pause) */
-@keyframes ecgHeartbeat {
+/* ============================================================================
+ * SUPERDESIGN MEDITATIVE BREATHING GLOW (14s Organic Inhale 7s / Exhale 7s)
+ * Metallic Silver & Crisp Luminous White Halo tuned for light luxury ivory/glass
+ * ============================================================================ */
+@keyframes breathingSilverTextGlow {
+  0%, 100% {
+    text-shadow:
+      0 0 2px rgba(255, 255, 255, 0.45),
+      0 0 8px rgba(148, 163, 184, 0.14);
+  }
+  46%, 54% {
+    text-shadow:
+      0 0 5px rgba(255, 255, 255, 0.96),
+      0 0 14px rgba(203, 213, 225, 0.85),
+      0 0 26px rgba(148, 163, 184, 0.56),
+      0 0 40px rgba(226, 232, 240, 0.62);
+  }
+}
+
+@keyframes breathingSilverLineGlow {
+  0%, 100% {
+    filter:
+      drop-shadow(0 0 1px rgba(255, 255, 255, 0.4))
+      drop-shadow(0 0 4px rgba(148, 163, 184, 0.16));
+  }
+  46%, 54% {
+    filter:
+      drop-shadow(0 0 4px rgba(255, 255, 255, 0.95))
+      drop-shadow(0 0 10px rgba(203, 213, 225, 0.88))
+      drop-shadow(0 0 18px rgba(148, 163, 184, 0.58));
+  }
+}
+
+.breathing-glow-text {
+  animation: breathingSilverTextGlow 14s cubic-bezier(0.37, 0, 0.63, 1) infinite;
+  will-change: text-shadow;
+}
+
+.breathing-glow-line {
+  animation: breathingSilverLineGlow 14s cubic-bezier(0.37, 0, 0.63, 1) infinite;
+  will-change: filter;
+}
+
+/* ============================================================================
+ * GLASSMORPHIC DYNAMIC ISLAND NAVBAR & BEVEL-UP BUTTONS
+ * Subtle Metallic Silver / Crisp White Rim Glow + Smooth Upward Bevel Lift
+ * ============================================================================ */
+.glass-island-nav {
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.92);
+  box-shadow:
+    0 0 0 1px rgba(203, 213, 225, 0.55),
+    0 0 18px 1px rgba(203, 213, 225, 0.34),
+    0 12px 36px -10px rgba(19, 80, 97, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+.glass-btn-teal {
+  background: linear-gradient(
+    180deg,
+    rgba(24, 96, 114, 0.92) 0%,
+    rgba(19, 80, 97, 0.96) 100%
+  );
+  backdrop-filter: blur(18px) saturate(150%);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  box-shadow:
+    0 0 0 1px rgba(203, 213, 225, 0.5),
+    0 0 14px 1px rgba(203, 213, 225, 0.34),
+    0 10px 24px -8px rgba(19, 80, 97, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.36);
+  transition:
+    transform 300ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 300ms cubic-bezier(0.22, 1, 0.36, 1),
+    background 260ms ease,
+    border-color 260ms ease;
+}
+
+.glass-btn-teal:hover {
+  background: linear-gradient(
+    180deg,
+    rgba(0, 134, 148, 0.94) 0%,
+    rgba(19, 96, 112, 0.98) 100%
+  );
+  border-color: rgba(255, 255, 255, 0.72);
+  transform: translateY(-3px);
+  box-shadow:
+    0 0 0 1px rgba(226, 232, 240, 0.78),
+    0 0 22px 2px rgba(203, 213, 225, 0.52),
+    0 18px 34px -10px rgba(19, 80, 97, 0.42),
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.55);
+}
+
+.glass-btn-teal:active {
+  transform: translateY(-0.5px);
+}
+
+.glass-btn-light {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.88) 0%,
+    rgba(250, 249, 246, 0.78) 100%
+  );
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  box-shadow:
+    0 0 0 1px rgba(203, 213, 225, 0.65),
+    0 0 14px 1px rgba(203, 213, 225, 0.36),
+    0 8px 22px -8px rgba(19, 80, 97, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
+  transition:
+    transform 300ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 300ms cubic-bezier(0.22, 1, 0.36, 1),
+    background 260ms ease,
+    border-color 260ms ease;
+}
+
+.glass-btn-light:hover {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.97) 0%,
+    rgba(248, 250, 252, 0.92) 100%
+  );
+  border-color: rgba(255, 255, 255, 1);
+  transform: translateY(-3px);
+  box-shadow:
+    0 0 0 1px rgba(148, 163, 184, 0.65),
+    0 0 22px 2px rgba(203, 213, 225, 0.56),
+    0 16px 32px -10px rgba(19, 80, 97, 0.18),
+    inset 0 1.5px 0 rgba(255, 255, 255, 1);
+}
+
+.glass-btn-light:active {
+  transform: translateY(-0.5px);
+}
+
+/* Smooth arrival focus cue when Explore Treatments finishes scrolling */
+@keyframes sectionFocusArrive {
   0% {
-    transform: scale(1);
-    opacity: 0.92;
-    filter: drop-shadow(0 0 0px rgba(0, 163, 173, 0));
-  }
-  12% {
-    transform: scale(1.05);
-    opacity: 1;
-    filter: drop-shadow(0 0 5px rgba(0, 163, 173, 0.7));
-  }
-  24% {
-    transform: scale(0.98);
-    opacity: 0.95;
-    filter: drop-shadow(0 0 1px rgba(0, 163, 173, 0.3));
-  }
-  36% {
-    transform: scale(1.08);
-    opacity: 1;
-    filter: drop-shadow(0 0 8px rgba(0, 163, 173, 0.85));
-  }
-  50% {
-    transform: scale(1);
-    opacity: 0.92;
-    filter: drop-shadow(0 0 0px rgba(0, 163, 173, 0));
+    opacity: 0.85;
+    transform: translateY(6px);
   }
   100% {
-    transform: scale(1);
-    opacity: 0.92;
-    filter: drop-shadow(0 0 0px rgba(0, 163, 173, 0));
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-.animate-ecg-pulse {
-  animation: ecgHeartbeat 2.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-  transform-origin: center;
+.animate-section-arrive {
+  animation: sectionFocusArrive 650ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .breathing-glow-text,
+  .breathing-glow-line,
+  .animate-section-arrive {
+    animation: none !important;
+  }
+  .glass-btn-teal:hover,
+  .glass-btn-light:hover {
+    transform: none;
+  }
+}

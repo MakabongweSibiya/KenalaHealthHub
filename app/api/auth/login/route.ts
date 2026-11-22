@@ -1,3 +1,13 @@
+/**
+ * Totus Massage & Aesthetics — Hardened Admin Authentication Endpoint
+ *
+ * Enforces:
+ * - Distributed Neon-backed rate limiting & 15-minute lockout on both IP and email
+ * - Constant-time bcrypt password verification (prevents account enumeration)
+ * - HS256 JWT stored exclusively in HttpOnly, Secure, SameSite=Strict cookie
+ * - Strict no-store caching headers
+ */
+
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import {
@@ -9,14 +19,7 @@ import {
   recordFailedLogin,
   clearLoginAttempts,
 } from "@/lib/auth";
-
-function getClientIp(req: Request): string {
-  const forwarded = req.headers.get("x-forwarded-for");
-  if (forwarded) {
-    return forwarded.split(",")[0].trim();
-  }
-  return req.headers.get("x-real-ip") || "unknown-ip";
-}
+import { getClientIp, NO_STORE_HEADERS } from "@/lib/security";
 
 export async function POST(req: Request) {
   try {
@@ -24,7 +27,7 @@ export async function POST(req: Request) {
     if (!body || typeof body.email !== "string" || typeof body.password !== "string") {
       return NextResponse.json(
         { error: "Valid email and password are required." },
-        { status: 400 }
+        { status: 400, headers: NO_STORE_HEADERS }
       );
     }
 
@@ -34,7 +37,7 @@ export async function POST(req: Request) {
     if (!cleanEmail || !password || cleanEmail.length > 150 || password.length > 150) {
       return NextResponse.json(
         { error: "Email and password are required." },
-        { status: 400 }
+        { status: 400, headers: NO_STORE_HEADERS }
       );
     }
 
@@ -42,40 +45,48 @@ export async function POST(req: Request) {
     const ipKey = `ip:${clientIp}`;
     const emailKey = `email:${cleanEmail}`;
 
-    // 1. Check rate limit on both IP and Target Email
-    const ipLimit = checkLoginRateLimit(ipKey);
-    const emailLimit = checkLoginRateLimit(emailKey);
+    // 1. Check distributed Neon-backed rate limit on both IP and Target Email
+    const [ipLimit, emailLimit] = await Promise.all([
+      checkLoginRateLimit(ipKey),
+      checkLoginRateLimit(emailKey),
+    ]);
 
     if (!ipLimit.allowed || !emailLimit.allowed) {
-      const retrySeconds = Math.max(ipLimit.retryAfterSeconds, emailLimit.retryAfterSeconds);
+      const retrySeconds = Math.max(
+        ipLimit.retryAfterSeconds,
+        emailLimit.retryAfterSeconds
+      );
       const retryMinutes = Math.ceil(retrySeconds / 60);
       return NextResponse.json(
         {
-          error: `Too many failed login attempts. Account access is temporarily locked for ${retryMinutes} minute${
+          error: `Too many failed login attempts. Access is temporarily locked for ${retryMinutes} minute${
             retryMinutes === 1 ? "" : "s"
-          } for security.`,
+          }.`,
           lockedOut: true,
           retryAfterSeconds: retrySeconds,
         },
         {
           status: 429,
           headers: {
+            ...NO_STORE_HEADERS,
             "Retry-After": String(retrySeconds),
           },
         }
       );
     }
 
-    // 2. Look up Admin account
+    // 2. Look up Admin account in Neon PostgreSQL
     const admin = await prisma.admin.findUnique({
       where: { email: cleanEmail },
     });
 
     if (!admin) {
-      // Constant-time bcrypt execution to prevent email enumeration attacks
+      // Constant-time bcrypt execution to prevent timing-based email enumeration
       await verifyDummyPassword(password);
-      const failIp = recordFailedLogin(ipKey);
-      recordFailedLogin(emailKey);
+      const [failIp] = await Promise.all([
+        recordFailedLogin(ipKey),
+        recordFailedLogin(emailKey),
+      ]);
 
       return NextResponse.json(
         {
@@ -85,15 +96,17 @@ export async function POST(req: Request) {
                 failIp.remainingAttempts === 1 ? "" : "s"
               } remaining)`,
         },
-        { status: failIp.lockedOut ? 429 : 401 }
+        { status: failIp.lockedOut ? 429 : 401, headers: NO_STORE_HEADERS }
       );
     }
 
-    // 3. Verify Bcrypt Password Hash
+    // 3. Verify Bcrypt cost-12 password hash
     const isValid = await verifyPassword(password, admin.passwordHash);
     if (!isValid) {
-      const failIp = recordFailedLogin(ipKey);
-      const failEmail = recordFailedLogin(emailKey);
+      const [failIp, failEmail] = await Promise.all([
+        recordFailedLogin(ipKey),
+        recordFailedLogin(emailKey),
+      ]);
       const remaining = Math.min(failIp.remainingAttempts, failEmail.remainingAttempts);
       const isLocked = failIp.lockedOut || failEmail.lockedOut;
 
@@ -105,15 +118,14 @@ export async function POST(req: Request) {
                 remaining === 1 ? "" : "s"
               } remaining)`,
         },
-        { status: isLocked ? 429 : 401 }
+        { status: isLocked ? 429 : 401, headers: NO_STORE_HEADERS }
       );
     }
 
-    // 4. Clear failed attempt counters on successful authentication
-    clearLoginAttempts(ipKey);
-    clearLoginAttempts(emailKey);
+    // 4. Clear failed attempt buckets on successful login
+    await Promise.all([clearLoginAttempts(ipKey), clearLoginAttempts(emailKey)]);
 
-    // 5. Sign hardened HS256 JWT token
+    // 5. Sign hardened HS256 JWT session
     const token = signAdminToken({
       id: admin.id,
       email: admin.email,
@@ -121,17 +133,20 @@ export async function POST(req: Request) {
       role: admin.role,
     });
 
-    const response = NextResponse.json({
-      success: true,
-      admin: {
-        id: admin.id,
-        email: admin.email,
-        name: admin.name,
-        role: admin.role,
+    const response = NextResponse.json(
+      {
+        success: true,
+        admin: {
+          id: admin.id,
+          email: admin.email,
+          name: admin.name,
+          role: admin.role,
+        },
       },
-    });
+      { headers: NO_STORE_HEADERS }
+    );
 
-    // 6. Set hardened HTTP-Only, SameSite=Strict Cookie
+    // 6. Set HTTP-Only, Secure, SameSite=Strict session cookie
     response.cookies.set(ADMIN_COOKIE_NAME, token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -140,15 +155,13 @@ export async function POST(req: Request) {
       path: "/",
     });
 
-    // Clear legacy cookie name if present
     response.cookies.delete("khh_admin_session");
-
     return response;
-  } catch (error: any) {
+  } catch (error) {
     console.error("Login API error:", error);
     return NextResponse.json(
       { error: "Authentication service error. Please try again." },
-      { status: 500 }
+      { status: 500, headers: NO_STORE_HEADERS }
     );
   }
 }

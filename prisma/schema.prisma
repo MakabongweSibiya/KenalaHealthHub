@@ -89,6 +89,10 @@ model Booking {
   createdAt        DateTime             @default(now())
   updatedAt        DateTime             @updatedAt
   payments         PaymentTransaction[]
+
+  @@index([status])
+  @@index([appointmentDate])
+  @@index([createdAt])
 }
 
 model PaymentTransaction {
@@ -103,6 +107,17 @@ model PaymentTransaction {
   signatureValid Boolean  @default(false)
   rawPayload     String?
   createdAt      DateTime @default(now())
+
+  @@index([bookingId])
+  @@index([pfPaymentId])
+}
+
+model RateLimit {
+  key         String    @id
+  count       Int       @default(0)
+  windowStart DateTime  @default(now())
+  lockedUntil DateTime?
+  updatedAt   DateTime  @updatedAt
 }
 
 model ClinicSetting {

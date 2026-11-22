@@ -1,14 +1,46 @@
+/**
+ * Totus Massage & Aesthetics — Sandbox-Only Payment Simulation Endpoint
+ *
+ * Security control:
+ * Permanently disabled (`403 Forbidden`) whenever live PayFast payments are enabled
+ * (`PAYFAST_SANDBOX !== "true"`), preventing unauthenticated booking confirmation bypasses.
+ * Even in sandbox mode, requires an authenticated admin session.
+ */
+
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getAuthenticatedAdmin } from "@/lib/auth";
+import { FIXED_DEPOSIT_AMOUNT } from "@/lib/validation";
+import { NO_STORE_HEADERS } from "@/lib/security";
 import { sendAdminWhatsAppNotification } from "@/lib/whatsapp";
 import { sendBookingEmails } from "@/lib/email";
 
 export async function POST(req: Request) {
+  // Hard production block: never allow simulated payment confirmation outside sandbox mode
+  if (process.env.PAYFAST_SANDBOX !== "true") {
+    return NextResponse.json(
+      { error: "Simulated confirmation is disabled in live payment mode." },
+      { status: 403, headers: NO_STORE_HEADERS }
+    );
+  }
+
+  const admin = await getAuthenticatedAdmin();
+  if (!admin) {
+    return NextResponse.json(
+      { error: "Unauthorized" },
+      { status: 401, headers: NO_STORE_HEADERS }
+    );
+  }
+
   try {
-    const { referenceCode } = await req.json();
+    const body = await req.json().catch(() => null);
+    const referenceCode = typeof body?.referenceCode === "string" ? body.referenceCode.trim() : "";
 
     if (!referenceCode) {
-      return NextResponse.json({ error: "Reference code required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Reference code required" },
+        { status: 400, headers: NO_STORE_HEADERS }
+      );
     }
 
     const booking = await prisma.booking.findUnique({
@@ -17,14 +49,17 @@ export async function POST(req: Request) {
     });
 
     if (!booking) {
-      return NextResponse.json({ error: "Booking not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Booking not found" },
+        { status: 404, headers: NO_STORE_HEADERS }
+      );
     }
 
-    // Determine amount paid based on choice (Fixed R200 deposit or Full 100%)
+    const isProduct = booking.service.itemType === "PRODUCT";
     const paidAmount =
-      booking.paymentChoice === "FULL_100"
+      isProduct || booking.paymentChoice === "FULL_100"
         ? booking.totalAmount
-        : 200.0;
+        : Math.min(FIXED_DEPOSIT_AMOUNT, booking.totalAmount);
     const balance = Math.max(0, Math.round((booking.totalAmount - paidAmount) * 100) / 100);
 
     const updated = await prisma.booking.update({
@@ -38,7 +73,6 @@ export async function POST(req: Request) {
       include: { service: true },
     });
 
-    // Record mock payment
     await prisma.paymentTransaction.create({
       data: {
         bookingId: booking.id,
@@ -50,7 +84,6 @@ export async function POST(req: Request) {
       },
     });
 
-    // Trigger WhatsApp & Email
     await sendAdminWhatsAppNotification({
       referenceCode: updated.referenceCode,
       patientName: updated.patientName,
@@ -81,9 +114,15 @@ export async function POST(req: Request) {
       medicalNotes: updated.medicalNotes,
     });
 
-    return NextResponse.json({ success: true, booking: updated });
-  } catch (error: any) {
+    return NextResponse.json(
+      { success: true, booking: updated },
+      { headers: NO_STORE_HEADERS }
+    );
+  } catch (error) {
     console.error("Simulation error:", error);
-    return NextResponse.json({ error: "Failed to simulate confirmation" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to simulate confirmation" },
+      { status: 500, headers: NO_STORE_HEADERS }
+    );
   }
 }

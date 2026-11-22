@@ -1,6 +1,16 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+/**
+ * Totus Massage & Aesthetics — Public Storefront Homepage
+ *
+ * Orchestrates:
+ * - Floating Glassmorphic Dynamic Island Navbar
+ * - Seamless Borderless Welcome Hero with meditative breathing glow & bevel-up glass CTAs
+ * - Custom quintic inertial scroll animation from `Explore Treatments` into the catalog
+ * - Real-time Neon PostgreSQL Services/Products catalog & dynamic Location-aware Footer
+ */
+
+import React, { useState, useEffect, useCallback } from "react";
 import { Navbar } from "@/components/Navbar";
 import { HeroSection } from "@/components/HeroSection";
 import { ServiceCard, ServiceItem } from "@/components/ServiceCard";
@@ -8,6 +18,7 @@ import { ServiceDetailModal } from "@/components/ServiceDetailModal";
 import { BookingModal } from "@/components/BookingModal";
 import { SuccessModal } from "@/components/SuccessModal";
 import { Footer } from "@/components/Footer";
+import { LocationItem } from "@/lib/schedule";
 import {
   Phone,
   MessageCircle,
@@ -17,9 +28,11 @@ import {
 
 export default function HomePage() {
   const [services, setServices] = useState<ServiceItem[]>([]);
+  const [locations, setLocations] = useState<LocationItem[]>([]);
   const [loadingServices, setLoadingServices] = useState<boolean>(true);
   const [selectedFilter, setSelectedFilter] = useState<string>("All");
   const [isServicesExpanded, setIsServicesExpanded] = useState<boolean>(false);
+  const [arrivePulse, setArrivePulse] = useState<boolean>(false);
 
   // Modals state
   const [detailService, setDetailService] = useState<ServiceItem | null>(null);
@@ -31,23 +44,95 @@ export default function HomePage() {
   const [confirmedBooking, setConfirmedBooking] = useState<any | null>(null);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 
-  // Fetch services & products on load
+  // Load active Services/Products and active Studio Locations in parallel
   useEffect(() => {
-    async function loadServices() {
+    let mounted = true;
+    async function loadStorefrontData() {
       try {
         setLoadingServices(true);
-        const res = await fetch("/api/admin/services", { cache: "no-store" });
-        const data = await res.json();
-        if (data.services) {
-          setServices(data.services.filter((s: ServiceItem) => s.isActive !== false));
+        const [servicesRes, locationsRes] = await Promise.all([
+          fetch("/api/admin/services", { cache: "no-store" }),
+          fetch("/api/admin/locations", { cache: "no-store" }),
+        ]);
+
+        const [servicesData, locationsData] = await Promise.all([
+          servicesRes.json().catch(() => ({})),
+          locationsRes.json().catch(() => ({})),
+        ]);
+
+        if (!mounted) return;
+
+        if (Array.isArray(servicesData.services)) {
+          setServices(
+            servicesData.services.filter((s: ServiceItem) => s.isActive !== false)
+          );
+        }
+        if (Array.isArray(locationsData.locations)) {
+          setLocations(
+            locationsData.locations.filter((l: LocationItem) => l.isActive !== false)
+          );
         }
       } catch (err) {
-        console.error("Failed to load services:", err);
+        console.error("Failed to load storefront data:", err);
       } finally {
-        setLoadingServices(false);
+        if (mounted) setLoadingServices(false);
       }
     }
-    loadServices();
+    loadStorefrontData();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  /**
+   * Smooth custom quintic ease-in-out scroll glide to the treatments section
+   * with exact vertical clearance for the Floating Dynamic Island Navbar.
+   */
+  const handleExploreTreatments = useCallback(() => {
+    const target = document.getElementById("services-section");
+    if (!target) return;
+
+    const prefersReduced =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const navClearance = 96;
+    const startY = window.scrollY;
+    const targetY = Math.max(
+      0,
+      target.getBoundingClientRect().top + window.scrollY - navClearance
+    );
+
+    if (prefersReduced) {
+      window.scrollTo(0, targetY);
+      return;
+    }
+
+    const distance = targetY - startY;
+    const duration = Math.min(920, Math.max(580, Math.abs(distance) * 0.72));
+    let startTime: number | null = null;
+
+    // Smooth quintic ease-in-out curve for refined organic glide
+    const easeInOutQuint = (t: number) =>
+      t < 0.5 ? 16 * t * t * t * t * t : 1 - Math.pow(-2 * t + 2, 5) / 2;
+
+    const step = (timestamp: number) => {
+      if (startTime === null) startTime = timestamp;
+      const elapsed = timestamp - startTime;
+      const progress = Math.min(1, elapsed / duration);
+      const eased = easeInOutQuint(progress);
+
+      window.scrollTo(0, startY + distance * eased);
+
+      if (progress < 1) {
+        window.requestAnimationFrame(step);
+      } else {
+        setArrivePulse(false);
+        window.requestAnimationFrame(() => setArrivePulse(true));
+      }
+    };
+
+    window.requestAnimationFrame(step);
   }, []);
 
   const hasProducts = services.some((s) => s.itemType === "PRODUCT");
@@ -93,27 +178,28 @@ export default function HomePage() {
       {/* Floating Dynamic Island Navbar */}
       <Navbar onOpenBooking={() => handleOpenBookingModal()} />
 
-      <main className="flex-1">
-        {/* Hero Section */}
+      <main className="flex-1 bg-[#FAF9F6]">
+        {/* Seamless Welcome Hero Section (zero bottom border or seam) */}
         <HeroSection
           onOpenBooking={() => handleOpenBookingModal()}
-          onExploreServices={() => {
-            const el = document.getElementById("services-section");
-            el?.scrollIntoView({ behavior: "smooth" });
-          }}
+          onExploreServices={handleExploreTreatments}
         />
 
-        {/* Services & Products Catalog Section */}
+        {/* Services & Products Catalog Section — Seamless #FAF9F6 continuation */}
         <section
           id="services-section"
           aria-labelledby="services-heading"
-          className="py-16 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full"
+          className="pt-10 pb-20 sm:pt-14 sm:pb-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full"
         >
-          {/* Section Title */}
-          <div className="text-center max-w-2xl mx-auto mb-10">
+          {/* Section Title with synchronized meditative metallic-silver/white breathing glow */}
+          <div
+            className={`text-center max-w-2xl mx-auto mb-10 ${
+              arrivePulse ? "animate-section-arrive" : ""
+            }`}
+          >
             <h2
               id="services-heading"
-              className="text-3xl sm:text-4xl font-extrabold text-zinc-900 tracking-tight"
+              className="text-3xl sm:text-4xl font-extrabold text-zinc-900 tracking-tight breathing-glow-text"
             >
               {hasProducts
                 ? "Curated Treatments & Wellness Products"
@@ -126,12 +212,13 @@ export default function HomePage() {
             </p>
           </div>
 
-          {/* Filter Pills (Show when both Services and Products exist) */}
+          {/* Filter Pills (Shown automatically when both Services and Products exist) */}
           {filterTabs.length > 2 && (
             <div className="flex flex-wrap items-center justify-center gap-2 mb-10">
               {filterTabs.map((tab) => (
                 <button
                   key={tab}
+                  type="button"
                   onClick={() => {
                     setSelectedFilter(tab);
                     setIsServicesExpanded(false);
@@ -206,6 +293,7 @@ export default function HomePage() {
               {selectedFilter === "All" && filteredServices.length > 6 && (
                 <div className="mt-10 flex justify-center">
                   <button
+                    type="button"
                     onClick={() => setIsServicesExpanded(!isServicesExpanded)}
                     className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-xs font-bold text-zinc-900 bg-white border border-zinc-200 hover:border-[#135061] hover:bg-zinc-50 shadow-sm transition-all duration-200 active:scale-95 group"
                   >
@@ -227,8 +315,8 @@ export default function HomePage() {
         </section>
       </main>
 
-      {/* Clean White Compact Footer */}
-      <Footer />
+      {/* Clean White Dynamic Footer (shows live studio hours only when configured in Admin) */}
+      <Footer locations={locations} />
 
       {/* Modals */}
       <ServiceDetailModal

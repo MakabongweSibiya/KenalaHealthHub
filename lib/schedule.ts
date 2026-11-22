@@ -115,6 +115,20 @@ export function generateTimeSlotsBetween(
   return slots;
 }
 
+export function getTodaySouthAfricaIsoDate(): string {
+  try {
+    const formatter = new Intl.DateTimeFormat("en-CA", {
+      timeZone: "Africa/Johannesburg",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+    return formatter.format(new Date()); // YYYY-MM-DD in SAST
+  } catch {
+    return new Date().toISOString().slice(0, 10);
+  }
+}
+
 export function getLocationAvailabilityForDate(
   location: LocationItem,
   dateStr: string

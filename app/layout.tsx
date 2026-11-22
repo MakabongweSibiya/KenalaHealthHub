@@ -1,49 +1,68 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
-const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://totusmassages.co.za";
+const SITE_URL = (
+  process.env.NEXT_PUBLIC_APP_URL || "https://totusmassages.co.za"
+).trim();
+
+export const viewport: Viewport = {
+  themeColor: "#135061",
+  width: "device-width",
+  initialScale: 1,
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Totus Massage & Aesthetics | Luxury Massage Therapy, Spa & Aesthetics Treatments",
+    default:
+      "Totus Massage & Aesthetics | Totus Massages — Luxury Massage Therapy & Skin Aesthetics",
     template: "%s | Totus Massage & Aesthetics",
   },
   description:
-    "Totus Massage & Aesthetics offers bespoke therapeutic massage, deep tissue, Swedish, hot stone massage, luxury facials, body contouring, and holistic skin aesthetics in Pretoria East and mobile spa visits across Gauteng. Book online seamlessly.",
+    "Totus Massage & Aesthetics (Totus Massages) offers bespoke therapeutic massage, deep tissue, Swedish, hot stone therapy, luxury facials, body contouring, and holistic skin aesthetics across Pretoria, Gauteng, and Southern Africa. Reserve seamlessly online.",
+  applicationName: "Totus Massage & Aesthetics",
   keywords: [
-    "Totus Massage and Aesthetics",
+    "Totus Massages",
     "Totus Massage",
+    "Totus Massage and Aesthetics",
+    "Totus Massage & Aesthetics",
+    "totusmassages.co.za",
+    "Totus Spa South Africa",
     "massage therapy Pretoria",
     "massage Pretoria East",
+    "luxury massage South Africa",
+    "massage Gauteng",
     "deep tissue massage Pretoria",
-    "Swedish massage Pretoria",
-    "hot stone massage South Africa",
+    "Swedish massage South Africa",
+    "hot stone massage Pretoria",
     "aromatherapy massage",
-    "mobile massage therapist Pretoria",
-    "aesthetics studio Pretoria East",
-    "luxury facials Pretoria",
+    "aesthetics studio Pretoria",
+    "luxury facials South Africa",
     "body contouring Pretoria",
-    "skin aesthetics South Africa",
-    "spa treatments near me",
-    "relaxation massage booking online",
-    "holistic spa sanctuary Gauteng",
+    "skin rejuvenation aesthetics",
+    "spa treatments Southern Africa",
+    "online massage booking South Africa",
   ],
-  authors: [{ name: "Totus Massage & Aesthetics" }],
+  authors: [{ name: "Totus Massage & Aesthetics", url: SITE_URL }],
   creator: "Totus Massage & Aesthetics",
   publisher: "Totus Massage & Aesthetics",
   category: "Health, Beauty & Wellness",
   alternates: {
-    canonical: "/",
+    canonical: SITE_URL,
+    languages: {
+      "en-ZA": SITE_URL,
+      en: SITE_URL,
+    },
   },
   openGraph: {
     type: "website",
     locale: "en_ZA",
     url: SITE_URL,
     siteName: "Totus Massage & Aesthetics",
-    title: "Totus Massage & Aesthetics | Luxury Massage Therapy & Skin Aesthetics",
+    title:
+      "Totus Massage & Aesthetics | Totus Massages — Luxury Massage & Skin Aesthetics",
     description:
-      "Experience bespoke therapeutic massage, luxury facials, body sculpting, and holistic aesthetics. Reserve your studio or mobile session online with instant booking confirmation.",
+      "Your tranquil sanctuary for bespoke therapeutic massage, luxury facials, body contouring, and holistic skin aesthetics. Reserve your session online with instant confirmation.",
     images: [
       {
         url: "/totus-og.png",
@@ -55,9 +74,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Totus Massage & Aesthetics | Luxury Spa, Massage & Aesthetics",
+    title: "Totus Massage & Aesthetics | Luxury Massage & Skin Aesthetics",
     description:
-      "Restorative therapeutic massage, skin rejuvenation, body contouring, and luxury aesthetic treatments. Book your session seamlessly online.",
+      "Restorative therapeutic massage, skin rejuvenation, body contouring, and luxury aesthetic treatments. Book seamlessly online at totusmassages.co.za.",
     images: ["/totus-og.png"],
   },
   robots: {
@@ -85,64 +104,76 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const jsonLd = {
+  // Structured Schema.org JSON-LD graph for maximum Google Rich Results & Local/Global SEO
+  const structuredData = {
     "@context": "https://schema.org",
-    "@type": "DaySpa",
-    name: "Totus Massage & Aesthetics",
-    description:
-      "Tranquil luxury sanctuary offering bespoke massage therapy, deep tissue, Swedish, aromatherapy, hot stone therapy, luxury facials, body contouring, and skin aesthetics in-studio and via mobile spa sessions.",
-    url: SITE_URL,
-    logo: `${SITE_URL}/totus-emblem.png`,
-    image: `${SITE_URL}/totus-og.png`,
-    telephone: "+27790118464",
-    email: "totusmassages@gmail.com",
-    priceRange: "R200 - R2500",
-    currenciesAccepted: "ZAR",
-    paymentAccepted: "PayFast, Credit Card, Debit Card, Instant EFT",
-    areaServed: [
-      { "@type": "City", name: "Pretoria" },
-      { "@type": "AdministrativeArea", name: "Gauteng" },
-      { "@type": "Country", name: "South Africa" },
-    ],
-    address: {
-      "@type": "PostalAddress",
-      addressLocality: "Pretoria East",
-      addressRegion: "Gauteng",
-      addressCountry: "ZA",
-    },
-    openingHoursSpecification: [
+    "@graph": [
       {
-        "@type": "OpeningHoursSpecification",
-        dayOfWeek: [
-          "Monday",
-          "Tuesday",
-          "Wednesday",
-          "Thursday",
-          "Friday",
-          "Saturday",
+        "@type": "WebSite",
+        "@id": `${SITE_URL}/#website`,
+        url: SITE_URL,
+        name: "Totus Massage & Aesthetics",
+        alternateName: ["Totus Massages", "Totus Massage", "Totus Aesthetics"],
+        inLanguage: "en-ZA",
+        publisher: { "@id": `${SITE_URL}/#business` },
+      },
+      {
+        "@type": ["DaySpa", "HealthAndBeautyBusiness", "LocalBusiness"],
+        "@id": `${SITE_URL}/#business`,
+        name: "Totus Massage & Aesthetics",
+        alternateName: ["Totus Massages", "Totus Massage"],
+        description:
+          "Tranquil luxury sanctuary offering bespoke massage therapy, deep tissue, Swedish, aromatherapy, hot stone therapy, luxury facials, body contouring, and holistic skin aesthetics.",
+        url: SITE_URL,
+        logo: {
+          "@type": "ImageObject",
+          url: `${SITE_URL}/totus-emblem.png`,
+        },
+        image: `${SITE_URL}/totus-og.png`,
+        telephone: "+27790118464",
+        email: "totusmassages@gmail.com",
+        priceRange: "R200 - R2500",
+        currenciesAccepted: "ZAR",
+        paymentAccepted: "PayFast, Credit Card, Debit Card, Instant EFT",
+        areaServed: [
+          { "@type": "City", name: "Pretoria" },
+          { "@type": "AdministrativeArea", name: "Gauteng" },
+          { "@type": "Country", name: "South Africa" },
+          { "@type": "Place", name: "Southern Africa" },
         ],
-        opens: "08:00",
-        closes: "17:00",
+        address: {
+          "@type": "PostalAddress",
+          addressLocality: "Pretoria",
+          addressRegion: "Gauteng",
+          addressCountry: "ZA",
+        },
+        contactPoint: {
+          "@type": "ContactPoint",
+          telephone: "+27790118464",
+          contactType: "reservations",
+          areaServed: "ZA",
+          availableLanguage: ["English"],
+        },
+        hasOfferCatalog: {
+          "@type": "OfferCatalog",
+          name: "Massage & Aesthetics Treatments",
+          itemListElement: [
+            { "@type": "OfferCatalog", name: "Therapeutic & Relaxation Massages" },
+            { "@type": "OfferCatalog", name: "Luxury Facials & Skin Rejuvenation" },
+            { "@type": "OfferCatalog", name: "Body Contouring & Holistic Aesthetics" },
+            { "@type": "OfferCatalog", name: "Curated Wellness Products" },
+          ],
+        },
       },
     ],
-    hasOfferCatalog: {
-      "@type": "OfferCatalog",
-      name: "Massage & Aesthetics Treatments",
-      itemListElement: [
-        { "@type": "OfferCatalog", name: "Therapeutic & Relaxation Massages" },
-        { "@type": "OfferCatalog", name: "Luxury Facials & Skin Rejuvenation" },
-        { "@type": "OfferCatalog", name: "Body Contouring & Holistic Aesthetics" },
-        { "@type": "OfferCatalog", name: "Mobile Spa & Private Home Sessions" },
-      ],
-    },
   };
 
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="en-ZA" className="scroll-smooth">
       <head>
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
       </head>
       <body className="antialiased min-h-screen bg-[#FAF9F6] text-zinc-900">

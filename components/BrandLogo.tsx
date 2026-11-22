@@ -1,3 +1,10 @@
+/**
+ * Totus Massage & Aesthetics — Brand Logo & Botanical Lotus Divider Components
+ *
+ * Uses the authentic transparent `/totus-emblem.png` mark paired with clean brand typography.
+ * Supports an optional slow metallic-silver/white `breathingGlow` prop for the Navbar wordmark.
+ */
+
 import React from "react";
 
 interface BrandLogoProps {
@@ -5,6 +12,7 @@ interface BrandLogoProps {
   className?: string;
   size?: "sm" | "md" | "lg";
   isDark?: boolean;
+  breathingGlow?: boolean;
 }
 
 export function BrandLogo({
@@ -12,8 +20,10 @@ export function BrandLogo({
   className = "",
   size = "md",
   isDark = false,
+  breathingGlow = false,
 }: BrandLogoProps) {
   const isDarkMode = isDark || variant === "light";
+
   const iconSizes = {
     sm: "w-9 h-9",
     md: "w-11 h-11",
@@ -31,6 +41,8 @@ export function BrandLogo({
     md: "text-[9px] sm:text-[10px] tracking-[0.2em]",
     lg: "text-xs tracking-[0.24em]",
   };
+
+  const glowClass = breathingGlow ? "breathing-glow-text" : "";
 
   return (
     <div className={`flex items-center gap-2.5 sm:gap-3 select-none ${className}`}>
@@ -51,7 +63,7 @@ export function BrandLogo({
             <span
               className={`font-black uppercase ${
                 isDarkMode ? "text-[#00A3AD]" : "text-[#135061]"
-              } ${titleSizes[size]}`}
+              } ${titleSizes[size]} ${glowClass}`}
             >
               TOTUS
             </span>
@@ -65,7 +77,7 @@ export function BrandLogo({
             <span
               className={`font-extrabold uppercase whitespace-nowrap ${
                 isDarkMode ? "text-white" : "text-zinc-900"
-              } ${subSizes[size]}`}
+              } ${subSizes[size]} ${glowClass}`}
             >
               MASSAGE <span className="text-[#E86689]">&amp;</span> AESTHETICS
             </span>
@@ -81,6 +93,9 @@ export function BrandLogo({
   );
 }
 
+/**
+ * Serene Botanical Lotus Divider displayed in the Hero and Footer sections.
+ */
 export function EcgPulseLine({
   className = "",
   isDark = false,
