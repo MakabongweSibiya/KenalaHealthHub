@@ -481,45 +481,47 @@ export function BookingModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
-      {/* Backdrop */}
+      {/* Frosted Dark Backdrop */}
       <div
-        className="fixed inset-0 bg-black/55 backdrop-blur-sm transition-opacity"
+        className="fixed inset-0 bg-zinc-950/45 backdrop-blur-md transition-opacity"
         onClick={onClose}
       />
 
-      {/* Modal Dialog */}
-      <div className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden z-10 animate-in fade-in zoom-in-95 duration-200">
+      {/* Glassmorphic Modal Dialog Card with subtle metallic silver/white rim glow */}
+      <div className="relative w-full max-w-2xl max-h-[92dvh] flex flex-col glass-modal-card rounded-3xl overflow-hidden z-10 animate-in fade-in zoom-in-95 duration-200">
         {/* Header */}
-        <div className="bg-white text-zinc-900 p-6 border-b border-zinc-200 relative">
+        <div className="bg-white/35 backdrop-blur-md text-zinc-900 p-5 sm:p-6 border-b border-zinc-200/60 relative flex-shrink-0">
           <button
+            type="button"
             onClick={onClose}
-            className="absolute top-5 right-5 p-2 rounded-full text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 transition-colors"
+            aria-label="Close booking modal"
+            className="absolute top-4 right-4 sm:top-5 sm:right-5 w-9 h-9 inline-flex items-center justify-center rounded-full text-zinc-500 hover:text-zinc-900 hover:bg-zinc-900/5 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
 
-          <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#135061] px-2.5 py-0.5 rounded-full bg-[#F0F9FA] border border-[#B2E2E6] inline-block mb-1.5">
+          <span className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-[#135061] block mb-1.5">
             Step {step} of 3
           </span>
-          <h2 className="text-2xl font-extrabold text-zinc-900">
+          <h2 className="text-xl sm:text-2xl font-extrabold text-zinc-900 pr-10 leading-snug">
             {step === 1 && (isProduct ? "Select Product & Date" : "Select Treatment, Location & Time")}
             {step === 2 && "Your Contact Details"}
             {step === 3 && "Payment & Confirmation"}
           </h2>
-          <p className="text-xs text-zinc-500 mt-1">
+          <p className="text-xs text-zinc-600 mt-1">
             Totus Massage &amp; Aesthetics — Massage Therapist (079 011 8464)
           </p>
 
           {/* Stepper Progress Bar */}
           <div className="grid grid-cols-3 gap-2 mt-4">
-            <div className={`h-1.5 rounded-full ${step >= 1 ? "bg-[#135061]" : "bg-zinc-200"}`} />
-            <div className={`h-1.5 rounded-full ${step >= 2 ? "bg-[#135061]" : "bg-zinc-200"}`} />
-            <div className={`h-1.5 rounded-full ${step >= 3 ? "bg-[#135061]" : "bg-zinc-200"}`} />
+            <div className={`h-1.5 rounded-full transition-colors ${step >= 1 ? "bg-[#135061]" : "bg-zinc-300/60"}`} />
+            <div className={`h-1.5 rounded-full transition-colors ${step >= 2 ? "bg-[#135061]" : "bg-zinc-300/60"}`} />
+            <div className={`h-1.5 rounded-full transition-colors ${step >= 3 ? "bg-[#135061]" : "bg-zinc-300/60"}`} />
           </div>
         </div>
 
-        {/* Modal Form Body */}
-        <div className="p-6 max-h-[68vh] overflow-y-auto space-y-5">
+        {/* Modal Form Body (smoothly scrollable on mobile while keeping Header & Footer anchored) */}
+        <div className="p-5 sm:p-6 flex-1 overflow-y-auto space-y-5">
           {/* STEP 1: SERVICE/PRODUCT, LOCATION & SCHEDULE */}
           {step === 1 && (
             <div className="space-y-5">
@@ -1116,21 +1118,23 @@ export function BookingModal({
         </div>
 
         {/* Footer Navigation */}
-        <div className="p-6 bg-zinc-50 border-t border-zinc-100 flex items-center justify-between gap-3">
+        <div className="p-4 sm:p-6 bg-white/40 backdrop-blur-md border-t border-zinc-200/60 flex items-center justify-between gap-3 flex-shrink-0">
           {step > 1 ? (
             <button
+              type="button"
               onClick={() => {
                 setIsRedirectingPayFast(false);
                 setStep((prev) => (prev - 1) as any);
               }}
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-semibold text-zinc-700 hover:bg-zinc-200 transition-colors"
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full text-xs font-semibold text-zinc-700 hover:bg-zinc-900/5 transition-colors"
             >
               <ArrowLeft className="w-4 h-4" /> Back
             </button>
           ) : (
             <button
+              type="button"
               onClick={onClose}
-              className="px-4 py-2.5 rounded-xl text-xs font-semibold text-zinc-500 hover:text-zinc-800 transition-colors"
+              className="px-4 py-2.5 rounded-full text-xs font-semibold text-zinc-600 hover:text-zinc-900 hover:bg-zinc-900/5 transition-colors"
             >
               Cancel
             </button>
@@ -1138,22 +1142,24 @@ export function BookingModal({
 
           {step === 1 && (
             <button
+              type="button"
               onClick={handleStep1Next}
               disabled={services.length === 0 || (!isProduct && !availability.isOpen)}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-xs font-bold text-white bg-[#135061] hover:bg-[#007C89] shadow-md transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="glass-btn-teal inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-xs font-bold text-white group"
             >
               <span>Continue to Details</span>
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-4 h-4 transition-transform duration-300 ease-out group-hover:translate-x-0.5" />
             </button>
           )}
 
           {step === 2 && (
             <button
+              type="button"
               onClick={handleStep2Next}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-xs font-bold text-white bg-[#135061] hover:bg-[#007C89] shadow-md transition-all active:scale-95"
+              className="glass-btn-teal inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-xs font-bold text-white group"
             >
               <span>Review &amp; Payment</span>
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-4 h-4 transition-transform duration-300 ease-out group-hover:translate-x-0.5" />
             </button>
           )}
 
@@ -1162,7 +1168,7 @@ export function BookingModal({
               type="button"
               onClick={handleSubmitBooking}
               disabled={isRedirectingPayFast}
-              className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full text-xs font-bold text-white bg-[#135061] hover:bg-[#007C89] shadow-lg transition-all active:scale-95 disabled:opacity-75"
+              className="glass-btn-teal inline-flex items-center justify-center gap-2 px-6 sm:px-7 py-3.5 rounded-full text-xs font-bold text-white"
             >
               {isRedirectingPayFast ? (
                 <>

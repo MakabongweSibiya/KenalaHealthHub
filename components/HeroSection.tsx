@@ -20,7 +20,7 @@ interface HeroSectionProps {
 
 export function HeroSection({ onOpenBooking, onExploreServices }: HeroSectionProps) {
   return (
-    <section className="relative overflow-hidden bg-[#FAF9F6] pt-32 sm:pt-40 pb-16 sm:pb-24">
+    <section className="relative overflow-hidden bg-[#FAF9F6] pt-28 sm:pt-40 pb-14 sm:pb-24">
       {/* Ultra-soft top corner ambient aura that fades cleanly into #FAF9F6 well before bottom edge */}
       <div className="absolute -top-24 -right-24 w-[24rem] h-[24rem] rounded-full bg-[#E86689]/[0.06] blur-3xl pointer-events-none" />
       <div className="absolute top-12 -left-24 w-[22rem] h-[22rem] rounded-full bg-[#007C89]/[0.06] blur-3xl pointer-events-none" />

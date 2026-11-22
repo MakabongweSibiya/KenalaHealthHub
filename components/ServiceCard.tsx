@@ -41,7 +41,7 @@ export function ServiceCard({
   const retainerAmount = 200;
 
   return (
-    <div className="group relative flex flex-col justify-between bg-white rounded-2xl overflow-hidden border border-zinc-200 shadow-sm hover:shadow-xl hover:border-[#135061] transition-all duration-300">
+    <div className="group relative flex flex-col justify-between glass-card glass-card-hover rounded-3xl overflow-hidden">
       {/* Optional Image Header (Products or Services) */}
       {service.imageUrl && (
         <div className="relative w-full h-48 bg-zinc-100 overflow-hidden border-b border-zinc-100">
@@ -120,18 +120,20 @@ export function ServiceCard({
             )}
           </div>
 
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-2.5">
             <button
+              type="button"
               onClick={() => onOpenDetails(service)}
-              className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-semibold text-zinc-700 bg-zinc-100 hover:bg-zinc-200 transition-colors"
+              className="glass-btn-light flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full text-xs font-semibold text-zinc-800"
             >
-              <Info className="w-3.5 h-3.5 text-zinc-500" />
+              <Info className="w-3.5 h-3.5 text-[#135061]" />
               Details
             </button>
 
             <button
+              type="button"
               onClick={() => onSelectForBooking(service)}
-              className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-bold text-white bg-[#135061] hover:bg-[#007C89] transition-colors shadow-sm"
+              className="glass-btn-teal flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full text-xs font-bold text-white"
             >
               {isProduct ? "Order Now" : "Book Slot"}
               <ArrowRight className="w-3.5 h-3.5" />

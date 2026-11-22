@@ -169,7 +169,7 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en-ZA" className="scroll-smooth">
+    <html lang="en-ZA">
       <head>
         <script
           type="application/ld+json"

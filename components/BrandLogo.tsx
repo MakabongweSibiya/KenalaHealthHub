@@ -1,8 +1,9 @@
 /**
  * Totus Massage & Aesthetics — Brand Logo & Botanical Lotus Divider Components
  *
- * Uses the authentic transparent `/totus-emblem.png` mark paired with clean brand typography.
- * Supports an optional slow metallic-silver/white `breathingGlow` prop for the Navbar wordmark.
+ * Uses the authentic transparent `/totus-emblem.png` mark paired with responsive brand typography
+ * tuned mathematically to fit cleanly inside the mobile Dynamic Island navbar down to 320px width.
+ * Supports an optional slow metallic-silver/white `breathingGlow` prop for Navbar and Footer wordmarks.
  */
 
 import React from "react";
@@ -25,27 +26,33 @@ export function BrandLogo({
   const isDarkMode = isDark || variant === "light";
 
   const iconSizes = {
-    sm: "w-9 h-9",
-    md: "w-11 h-11",
-    lg: "w-14 h-14",
+    sm: "w-8 h-8 sm:w-9 sm:h-9",
+    md: "w-8 h-8 sm:w-11 sm:h-11",
+    lg: "w-12 h-12 sm:w-14 sm:h-14",
   };
 
   const titleSizes = {
-    sm: "text-lg tracking-[0.14em]",
-    md: "text-xl sm:text-2xl tracking-[0.16em]",
-    lg: "text-3xl tracking-[0.18em]",
+    sm: "text-base sm:text-lg tracking-[0.12em] sm:tracking-[0.14em]",
+    md: "text-base sm:text-2xl tracking-[0.12em] sm:tracking-[0.16em]",
+    lg: "text-2xl sm:text-3xl tracking-[0.16em] sm:tracking-[0.18em]",
   };
 
   const subSizes = {
-    sm: "text-[7px] tracking-[0.18em]",
-    md: "text-[9px] sm:text-[10px] tracking-[0.2em]",
-    lg: "text-xs tracking-[0.24em]",
+    sm: "text-[7px] tracking-[0.14em] sm:tracking-[0.18em]",
+    md: "text-[7px] sm:text-[10px] tracking-[0.09em] sm:tracking-[0.2em]",
+    lg: "text-[10px] sm:text-xs tracking-[0.18em] sm:tracking-[0.24em]",
+  };
+
+  const barWidths = {
+    sm: "w-2 sm:w-3",
+    md: "w-2 sm:w-3",
+    lg: "w-2.5 sm:w-3.5",
   };
 
   const glowClass = breathingGlow ? "breathing-glow-text" : "";
 
   return (
-    <div className={`flex items-center gap-2.5 sm:gap-3 select-none ${className}`}>
+    <div className={`flex items-center gap-2 sm:gap-3 min-w-0 select-none ${className}`}>
       {/* Authentic Totus Lotus + Zen Medallion Emblem */}
       <div
         className={`relative ${iconSizes[size]} flex-shrink-0 flex items-center justify-center`}
@@ -58,7 +65,7 @@ export function BrandLogo({
       </div>
 
       {variant !== "icon-only" && (
-        <div className="flex flex-col leading-none">
+        <div className="flex flex-col leading-none min-w-0">
           <div className="flex items-baseline">
             <span
               className={`font-black uppercase ${
@@ -68,9 +75,9 @@ export function BrandLogo({
               TOTUS
             </span>
           </div>
-          <div className="flex items-center gap-1.5 mt-1">
+          <div className="flex items-center gap-1 sm:gap-1.5 mt-0.5 sm:mt-1">
             <span
-              className={`h-[1.5px] w-3 rounded-full ${
+              className={`h-[1.5px] ${barWidths[size]} flex-shrink-0 rounded-full ${
                 isDarkMode ? "bg-zinc-400" : "bg-[#135061]"
               }`}
             />
@@ -82,7 +89,7 @@ export function BrandLogo({
               MASSAGE <span className="text-[#E86689]">&amp;</span> AESTHETICS
             </span>
             <span
-              className={`h-[1.5px] w-3 rounded-full ${
+              className={`h-[1.5px] ${barWidths[size]} flex-shrink-0 rounded-full ${
                 isDarkMode ? "bg-zinc-400" : "bg-[#135061]"
               }`}
             />
@@ -107,7 +114,7 @@ export function EcgPulseLine({
     <div className={`flex items-center gap-3 ${className}`}>
       <svg
         viewBox="0 0 220 36"
-        className="w-36 sm:w-40 h-7"
+        className="w-32 sm:w-40 h-7 flex-shrink-0"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >

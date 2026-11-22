@@ -24,25 +24,26 @@ export function ServiceDetailModal({
   const balanceDue = isProduct ? 0 : Math.max(0, service.price - retainerAmount);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
-      {/* Backdrop */}
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+      {/* Frosted Backdrop */}
       <div
-        className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
+        className="fixed inset-0 bg-zinc-950/45 backdrop-blur-md transition-opacity"
         onClick={onClose}
       />
 
-      {/* Modal Dialog Card */}
-      <div className="relative w-full max-w-xl bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden z-10 animate-in fade-in zoom-in-95 duration-200">
+      {/* Glassmorphic Modal Dialog Card */}
+      <div className="relative w-full max-w-xl max-h-[92dvh] flex flex-col glass-modal-card rounded-3xl overflow-hidden z-10 animate-in fade-in zoom-in-95 duration-200">
         {service.imageUrl && (
-          <div className="w-full h-52 bg-zinc-100 border-b border-zinc-100 overflow-hidden relative">
+          <div className="w-full h-48 sm:h-52 bg-zinc-100 border-b border-zinc-200/60 overflow-hidden relative flex-shrink-0">
             <img
               src={service.imageUrl}
               alt={service.name}
               className="w-full h-full object-cover"
             />
             <button
+              type="button"
               onClick={onClose}
-              className="absolute top-4 right-4 p-2 rounded-full bg-white/90 text-zinc-700 hover:text-zinc-900 shadow-md"
+              className="absolute top-4 right-4 p-2 rounded-full bg-white/85 backdrop-blur-md text-zinc-700 hover:text-zinc-900 shadow-md"
               aria-label="Close modal"
             >
               <X className="w-4 h-4" />
@@ -50,22 +51,23 @@ export function ServiceDetailModal({
           </div>
         )}
 
-        {/* Clean White Header */}
-        <div className="bg-white text-zinc-900 px-6 pt-6 pb-4 border-b border-zinc-100 relative">
+        {/* Translucent Glass Header */}
+        <div className="bg-white/35 backdrop-blur-md text-zinc-900 px-5 sm:px-6 pt-5 sm:pt-6 pb-4 border-b border-zinc-200/60 relative flex-shrink-0">
           {!service.imageUrl && (
             <button
+              type="button"
               onClick={onClose}
-              className="absolute top-5 right-5 p-2 rounded-full text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 transition-colors"
+              className="absolute top-4 right-4 sm:top-5 sm:right-5 w-9 h-9 inline-flex items-center justify-center rounded-full text-zinc-500 hover:text-zinc-900 hover:bg-zinc-900/5 transition-colors"
               aria-label="Close modal"
             >
               <X className="w-5 h-5" />
             </button>
           )}
 
-          <span className="text-[10px] font-bold uppercase tracking-widest text-[#135061] px-2.5 py-0.5 rounded-full bg-[#F0F9FA] border border-[#B2E2E6] inline-block mb-2">
+          <span className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-[#135061] block mb-1.5">
             {isProduct ? "Product" : service.category}
           </span>
-          <h2 className="text-2xl font-extrabold text-zinc-900 pr-8">
+          <h2 className="text-xl sm:text-2xl font-extrabold text-zinc-900 pr-10">
             {service.name}
           </h2>
           {!isProduct && service.durationMinutes > 0 && (
@@ -77,7 +79,7 @@ export function ServiceDetailModal({
         </div>
 
         {/* Modal Body */}
-        <div className="p-6 space-y-5 max-h-[60vh] overflow-y-auto">
+        <div className="p-5 sm:p-6 space-y-5 flex-1 overflow-y-auto">
           <div>
             <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-500 mb-2">
               {isProduct ? "Product Details" : "Treatment Overview"}
@@ -138,20 +140,22 @@ export function ServiceDetailModal({
         </div>
 
         {/* Modal Footer */}
-        <div className="p-5 bg-zinc-50 border-t border-zinc-100 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="p-4 sm:p-5 bg-white/40 backdrop-blur-md border-t border-zinc-200/60 flex flex-col sm:flex-row items-center justify-between gap-3 flex-shrink-0">
           <button
+            type="button"
             onClick={onClose}
-            className="w-full sm:w-auto px-5 py-2.5 rounded-full text-xs font-semibold text-zinc-600 hover:text-zinc-900 hover:bg-zinc-200 transition-colors"
+            className="w-full sm:w-auto px-5 py-2.5 rounded-full text-xs font-semibold text-zinc-600 hover:text-zinc-900 hover:bg-zinc-900/5 transition-colors"
           >
             Close
           </button>
 
           <button
+            type="button"
             onClick={() => {
               onClose();
               onBookNow(service);
             }}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-xs font-bold text-white bg-[#135061] hover:bg-[#007C89] shadow-md transition-all active:scale-95"
+            className="glass-btn-teal w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-xs font-bold text-white"
           >
             <span>{isProduct ? "Proceed to Order & Pay" : "Proceed to Book This Treatment"}</span>
             <ArrowRight className="w-4 h-4" />

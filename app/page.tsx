@@ -85,8 +85,9 @@ export default function HomePage() {
   }, []);
 
   /**
-   * Smooth custom quintic ease-in-out scroll glide to the treatments section
-   * with exact vertical clearance for the Floating Dynamic Island Navbar.
+   * Instant-response smooth scroll glide to the treatments section.
+   * Uses `behavior: "instant"` per rAF tick so native CSS smooth-scroll never interferes,
+   * beginning motion on the very first millisecond of click and easing organically to rest.
    */
   const handleExploreTreatments = useCallback(() => {
     const target = document.getElementById("services-section");
@@ -96,33 +97,31 @@ export default function HomePage() {
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    const navClearance = 96;
+    const navClearance = 92;
     const startY = window.scrollY;
     const targetY = Math.max(
       0,
       target.getBoundingClientRect().top + window.scrollY - navClearance
     );
 
-    if (prefersReduced) {
-      window.scrollTo(0, targetY);
+    if (prefersReduced || Math.abs(targetY - startY) < 4) {
+      window.scrollTo({ top: targetY, behavior: "instant" as ScrollBehavior });
       return;
     }
 
     const distance = targetY - startY;
-    const duration = Math.min(920, Math.max(580, Math.abs(distance) * 0.72));
-    let startTime: number | null = null;
+    const duration = Math.min(760, Math.max(520, Math.abs(distance) * 0.65));
+    const startTime = performance.now();
 
-    // Smooth quintic ease-in-out curve for refined organic glide
-    const easeInOutQuint = (t: number) =>
-      t < 0.5 ? 16 * t * t * t * t * t : 1 - Math.pow(-2 * t + 2, 5) / 2;
+    // Smooth ease-out-quart: immediate response on click, zero stall, silk-smooth deceleration
+    const easeOutQuart = (t: number) => 1 - Math.pow(1 - t, 4);
 
-    const step = (timestamp: number) => {
-      if (startTime === null) startTime = timestamp;
-      const elapsed = timestamp - startTime;
+    const step = (now: number) => {
+      const elapsed = now - startTime;
       const progress = Math.min(1, elapsed / duration);
-      const eased = easeInOutQuint(progress);
+      const nextY = startY + distance * easeOutQuart(progress);
 
-      window.scrollTo(0, startY + distance * eased);
+      window.scrollTo({ top: nextY, behavior: "instant" as ScrollBehavior });
 
       if (progress < 1) {
         window.requestAnimationFrame(step);
@@ -176,7 +175,10 @@ export default function HomePage() {
   return (
     <div className="min-h-screen flex flex-col bg-[#FAF9F6] text-zinc-900 selection:bg-[#135061] selection:text-white">
       {/* Floating Dynamic Island Navbar */}
-      <Navbar onOpenBooking={() => handleOpenBookingModal()} />
+      <Navbar
+        onOpenBooking={() => handleOpenBookingModal()}
+        onExploreServices={handleExploreTreatments}
+      />
 
       <main className="flex-1 bg-[#FAF9F6]">
         {/* Seamless Welcome Hero Section (zero bottom border or seam) */}
@@ -241,7 +243,7 @@ export default function HomePage() {
               Loading menu...
             </div>
           ) : services.length === 0 ? (
-            <div className="max-w-xl mx-auto bg-white rounded-3xl p-8 sm:p-10 border border-zinc-200/80 shadow-sm text-center">
+            <div className="max-w-xl mx-auto glass-card rounded-3xl p-7 sm:p-10 text-center">
               <div className="w-16 h-16 mx-auto mb-4 flex items-center justify-center">
                 <img
                   src="/totus-emblem.png"
@@ -257,19 +259,19 @@ export default function HomePage() {
                 being updated by our therapist. Please check back shortly or message us directly on
                 WhatsApp for bespoke bookings.
               </p>
-              <div className="flex flex-wrap items-center justify-center gap-3 mt-6">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-6">
                 <a
                   href="https://wa.me/27790118464"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-xs font-bold text-white bg-[#135061] hover:bg-[#007C89] transition-all shadow-sm"
+                  className="glass-btn-teal w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-xs font-bold text-white"
                 >
                   <MessageCircle className="w-4 h-4 text-white" />
                   <span>WhatsApp Therapist</span>
                 </a>
                 <a
                   href="tel:0790118464"
-                  className="inline-flex items-center gap-2 px-5 py-3 rounded-full text-xs font-bold text-zinc-900 bg-zinc-100 hover:bg-zinc-200 transition-all"
+                  className="glass-btn-light w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-xs font-bold text-zinc-900"
                 >
                   <Phone className="w-3.5 h-3.5 text-[#135061]" />
                   <span>Call 079 011 8464</span>
